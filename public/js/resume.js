@@ -79,11 +79,11 @@ function setupDropzone() {
 
 function handleFileSelected(file) {
   // Validate extension
-  const validExtensions = ['.pdf', '.docx', '.doc'];
+  const validExtensions = ['.pdf', '.docx', '.doc', '.txt'];
   const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 
   if (!validExtensions.includes(ext)) {
-    Auth.showToast('Please select a valid PDF or DOCX file.', 'error');
+    Auth.showToast('Please select a valid PDF, DOCX, or TXT file.', 'error');
     return;
   }
 

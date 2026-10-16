@@ -22,21 +22,22 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter (PDF and DOCX only)
+// File filter (PDF, DOCX, and TXT supported)
 const fileFilter = (req, file, cb) => {
-  const allowedExtensions = ['.pdf', '.docx', '.doc'];
+  const allowedExtensions = ['.pdf', '.docx', '.doc', '.txt'];
   const ext = path.extname(file.originalname).toLowerCase();
 
   const allowedMimes = [
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/msword'
+    'application/msword',
+    'text/plain'
   ];
 
   if (allowedExtensions.includes(ext) || allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file format. Only PDF and DOCX files are supported.'), false);
+    cb(new Error('Invalid file format. Supported formats: PDF, DOCX, and TXT.'), false);
   }
 };
 

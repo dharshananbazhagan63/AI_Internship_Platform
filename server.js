@@ -49,11 +49,20 @@ app.get('*', (req, res) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('[-] Unhandled server error:', err);
+  console.error('[-] Handled server error:', err.message || err);
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal server error occurred.'
   });
+});
+
+// Process safety crash guards to prevent accidental downtime
+process.on('uncaughtException', (err) => {
+  console.error('[!] Uncaught Exception captured safely (server kept running):', err.message || err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[!] Unhandled Promise Rejection captured safely (server kept running):', reason);
 });
 
 // Initialize database and start HTTP server
