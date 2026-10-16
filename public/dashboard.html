@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - AI Internship Aggregator</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Dynamic Navigation Bar Container -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Content -->
+  <main class="py-5" style="background-color: #f8fafc;">
+    <div class="container py-3">
+
+      <!-- Welcome Hero Banner -->
+      <div class="card card-custom p-4 p-md-5 mb-4 text-white position-relative overflow-hidden" style="background: var(--bg-gradient-hero);">
+        <div class="row align-items-center position-relative" style="z-index: 2;">
+          <div class="col-lg-8">
+            <span class="hero-badge mb-2">
+              <i class="bi bi-mortarboard-fill text-warning"></i>
+              <span id="dash-college-name">College Student</span>
+            </span>
+            <h1 class="fw-bold mb-2">
+              Welcome back, <span id="dash-student-name">Student</span>!
+            </h1>
+            <p class="lead opacity-90 mb-3" style="font-size: 1.05rem;">
+              Track your internship applications, evaluate skills extracted from your resume, and discover matching roles across 25+ top tech employers.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="applications.html" class="btn btn-brand-light btn-sm px-3">
+                <i class="bi bi-kanban me-1"></i> My Applications Tracker
+              </a>
+              <a href="internships.html" class="btn btn-brand-outline btn-sm text-white border-white px-3">
+                <i class="bi bi-briefcase me-1"></i> Find Internships
+              </a>
+              <a href="internships.html?filter=recommended" class="btn btn-brand-outline btn-sm text-white border-white px-3">
+                <i class="bi bi-stars me-1"></i> Recommended Companies
+              </a>
+              <a href="saved.html" class="btn btn-brand-outline btn-sm text-white border-white px-3">
+                <i class="bi bi-bookmark-heart me-1"></i> Saved Internships
+              </a>
+              <a href="upload-resume.html" class="btn btn-brand-outline btn-sm text-white border-white px-3">
+                <i class="bi bi-file-earmark-arrow-up me-1"></i> Update Resume
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-4 text-center d-none d-lg-block">
+            <i class="bi bi-robot display-1 opacity-75 text-white"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Row -->
+      <div class="row g-4 mb-4">
+        <!-- Resume Status Metric -->
+        <div class="col-lg-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon blue" id="metric-resume-icon"><i class="bi bi-file-earmark-text"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Resume Status</div>
+              <h5 class="fw-bold mb-0 text-dark" id="metric-resume-status">Checking...</h5>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Internships -->
+        <div class="col-lg-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="bi bi-briefcase"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Available Opportunities</div>
+              <h5 class="fw-bold mb-0 text-dark" id="metric-total-internships">35+ Roles</h5>
+            </div>
+          </div>
+        </div>
+
+        <!-- Identified Skills -->
+        <div class="col-lg-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="bi bi-check2-circle"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Identified Skills</div>
+              <h5 class="fw-bold mb-0 text-dark" id="metric-skills-count">0 Skills</h5>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tailored Roles Metric -->
+        <div class="col-lg-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon amber"><i class="bi bi-stars"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Tailored Roles</div>
+              <h5 class="fw-bold mb-0 text-dark" id="metric-top-match">-- Roles</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Application Funnel Quick Overview (Feature 6 & 10) -->
+      <div class="card card-custom p-4 mb-4 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h5 class="fw-bold text-dark mb-0">
+              <i class="bi bi-funnel-fill text-primary me-2"></i> Application Tracking Overview
+            </h5>
+            <small class="text-muted">Real-time statistics calculated from your SQLite tracking records</small>
+          </div>
+          <a href="applications.html" class="btn btn-brand btn-sm">
+            <i class="bi bi-arrow-right-circle me-1"></i> Open Full ATS Tracker
+          </a>
+        </div>
+
+        <div class="row g-3 text-center">
+          <div class="col-md-2 col-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <small class="text-muted d-block fw-bold">Tracked</small>
+              <h4 class="fw-bold text-dark mb-0" id="funnel-total">0</h4>
+            </div>
+          </div>
+          <div class="col-md-2 col-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <small class="text-muted d-block fw-bold">Interested</small>
+              <h4 class="fw-bold text-secondary mb-0" id="funnel-interested">0</h4>
+            </div>
+          </div>
+          <div class="col-md-2 col-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <small class="text-muted d-block fw-bold">Applied</small>
+              <h4 class="fw-bold text-primary mb-0" id="funnel-applied">0</h4>
+            </div>
+          </div>
+          <div class="col-md-2 col-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <small class="text-muted d-block fw-bold">Assessments</small>
+              <h4 class="fw-bold text-warning mb-0" id="funnel-assessment">0</h4>
+            </div>
+          </div>
+          <div class="col-md-2 col-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <small class="text-muted d-block fw-bold">Interviews</small>
+              <h4 class="fw-bold text-info mb-0" id="funnel-interviews">0</h4>
+            </div>
+          </div>
+          <div class="col-md-2 col-4">
+            <div class="p-3 bg-light rounded-3 border">
+              <small class="text-muted d-block fw-bold">Offers</small>
+              <h4 class="fw-bold text-success mb-0" id="funnel-offers">0</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills and Improvement Suggestions Row -->
+      <div class="row g-4 mb-5">
+        <!-- Top Identified Skills Cloud -->
+        <div class="col-lg-7">
+          <div class="card card-custom p-4 h-100 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-tools text-primary me-2"></i> Top Identified Skills</h5>
+                <small class="text-muted">Extracted from your resume or manually added in profile</small>
+              </div>
+              <a href="profile.html" class="btn btn-outline-secondary btn-sm">Edit Skills</a>
+            </div>
+
+            <div id="dashboard-skills-cloud" class="d-flex flex-wrap gap-2 pt-2">
+              <span class="text-muted small">No skills detected yet. Upload your resume to extract skills automatically.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill Improvement Suggestions -->
+        <div class="col-lg-5">
+          <div class="card card-custom p-4 h-100 bg-white">
+            <div class="mb-3">
+              <h5 class="fw-bold text-dark mb-0"><i class="bi bi-lightbulb text-warning me-2"></i> Skill Gap Suggestions</h5>
+              <small class="text-muted">High-demand skills found in recommended roles</small>
+            </div>
+
+            <ul class="list-group list-group-flush small" id="dashboard-suggestions-list">
+              <!-- Populated dynamically -->
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Recommended Internships Section (Feature 1: 10-20 recommendations) -->
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+        <div>
+          <h4 class="fw-bold text-dark mb-1"><i class="bi bi-stars text-primary me-2"></i> Recommended Opportunities For You</h4>
+          <p class="text-secondary small mb-0">Ranked by algorithm based on your skill compatibility score.</p>
+        </div>
+        <a href="internships.html?filter=recommended" class="btn btn-brand-outline btn-sm mt-2 mt-sm-0">
+          Explore All Recommendations <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+      <div class="row" id="dashboard-recommendations-grid">
+        <div class="col-12 text-center py-4">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+      </div>
+
+      <!-- Recent Applications Section -->
+      <div class="card card-custom p-4 mt-5 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-send-check text-success me-2"></i> Recent Applications Activity
+          </h5>
+          <a href="applications.html" class="btn btn-outline-primary btn-sm">View Full Tracking System</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr class="small text-muted">
+                <th>Role & Company</th>
+                <th>Work Mode</th>
+                <th>Stipend</th>
+                <th>Status</th>
+                <th>Activity Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="applications-table-body">
+              <tr>
+                <td colspan="6" class="text-center text-muted py-3">No applications submitted yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Dynamic Footer Container -->
+  <div id="footer-container"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Global Scripts -->
+  <script src="js/auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      Auth.renderNavbar('dashboard');
+      Auth.renderFooter();
+
+      if (!Auth.requireAuth()) return;
+
+      loadDashboardData();
+    });
+
+    async function loadDashboardData() {
+      try {
+        // 1. Get Me & Profile
+        const meRes = await Auth.authFetch('/api/auth/me');
+        const meData = await meRes.json();
+
+        if (meData.success && meData.user) {
+          document.getElementById('dash-student-name').textContent = meData.user.name;
+          document.getElementById('dash-college-name').textContent = meData.user.college_name || 'Student';
+
+          const skills = meData.profile?.skills || [];
+          document.getElementById('metric-skills-count').textContent = `${skills.length} Skill${skills.length === 1 ? '' : 's'}`;
+
+          const skillsCloud = document.getElementById('dashboard-skills-cloud');
+          if (skills.length > 0) {
+            skillsCloud.innerHTML = skills.map((s) => `
+              <span class="skill-tag skill-tag-matched"><i class="bi bi-check-circle"></i> ${s}</span>
+            `).join('');
+          } else {
+            skillsCloud.innerHTML = `
+              <div class="text-muted small py-2">
+                No skills detected yet. <a href="upload-resume.html" class="fw-bold text-primary">Upload your resume</a> to extract skills instantly.
+              </div>
+            `;
+          }
+
+          const resumeStatusEl = document.getElementById('metric-resume-status');
+          const resumeIconEl = document.getElementById('metric-resume-icon');
+          if (meData.hasResume) {
+            resumeStatusEl.textContent = 'Active & Parsed';
+            resumeStatusEl.className = 'fw-bold mb-0 text-success';
+            resumeIconEl.className = 'stat-icon green';
+          } else {
+            resumeStatusEl.textContent = 'Not Uploaded';
+            resumeStatusEl.className = 'fw-bold mb-0 text-warning';
+            resumeIconEl.className = 'stat-icon amber';
+          }
+        }
+
+        // 2. Load Recommendations (Feature 1: display 8-12 on dashboard, never limited to 2)
+        const recRes = await Auth.authFetch('/api/internships/recommendations');
+        const recData = await recRes.json();
+
+        if (recData.success && recData.recommendations) {
+          const recs = recData.recommendations;
+          document.getElementById('metric-total-internships').textContent = `${recs.length} Opportunities`;
+          document.getElementById('metric-top-match').textContent = `${recs.length} Roles`;
+
+          renderDashboardRecommendations(recs.slice(0, 8));
+          renderSkillSuggestions(recs);
+        }
+
+        // 3. Load Funnel Stats
+        loadFunnelStats();
+
+        // 4. Load Applications Table
+        loadApplicationsTable();
+
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+      }
+    }
+
+    async function loadFunnelStats() {
+      try {
+        const res = await Auth.authFetch('/api/applications/stats');
+        const data = await res.json();
+        if (data.success && data.stats) {
+          const s = data.stats;
+          document.getElementById('funnel-total').textContent = s.totalTracked;
+          document.getElementById('funnel-interested').textContent = s.interested;
+          document.getElementById('funnel-applied').textContent = s.applied + (s.applicationStarted || 0);
+          document.getElementById('funnel-assessment').textContent = s.assessment;
+          document.getElementById('funnel-interviews').textContent = s.interviewScheduled;
+          document.getElementById('funnel-offers').textContent = s.offerReceived;
+        }
+      } catch (e) {
+        console.warn('Could not load funnel stats:', e);
+      }
+    }
+
+    function renderDashboardRecommendations(items) {
+      const grid = document.getElementById('dashboard-recommendations-grid');
+      if (!grid) return;
+
+      if (!items || items.length === 0) {
+        grid.innerHTML = `
+          <div class="col-12 text-center py-4">
+            <div class="card card-custom p-4 bg-light border text-center">
+              <i class="bi bi-stars text-warning fs-1 mb-2"></i>
+              <h6 class="fw-bold text-dark">No Tailored Recommendations Yet</h6>
+              <p class="text-secondary small mb-3">Upload your resume to extract your technical skills and unlock personalized company recommendations.</p>
+              <div class="d-flex justify-content-center gap-2">
+                <a href="upload-resume.html" class="btn btn-brand btn-sm px-3"><i class="bi bi-file-earmark-arrow-up me-1"></i> Upload Resume</a>
+                <a href="internships.html" class="btn btn-outline-secondary btn-sm px-3"><i class="bi bi-briefcase me-1"></i> Browse All Openings</a>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = items.map((item) => {
+        return `
+          <div class="col-lg-6 col-md-12 mb-4">
+            <div class="card card-custom p-4 h-100 bg-white d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill fw-semibold">
+                    ${item.category}
+                  </span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill small fw-semibold">
+                    <i class="bi bi-stars me-1"></i> Skill Matched
+                  </span>
+                </div>
+
+                <h5 class="fw-bold text-dark mb-1">${item.title}</h5>
+                <div class="text-muted small fw-semibold mb-3">
+                  <i class="bi bi-building text-primary me-1"></i> ${item.company} &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-laptop me-1"></i> ${item.work_mode}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-cash me-1"></i> ${item.stipend || 'Competitive'}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-clock me-1"></i> ${item.duration}</span>
+                </div>
+
+                ${item.missingSkills && item.missingSkills.length > 0 ? `
+                  <div class="small mb-3 p-2 rounded bg-light border border-warning border-opacity-25">
+                    <div class="fw-semibold text-dark mb-1 small">
+                      <i class="bi bi-lightbulb-fill text-warning me-1"></i> Additional Skills Required for 100% Match:
+                    </div>
+                    <div class="d-flex flex-wrap gap-1">
+                      ${item.missingSkills.map((s) => `<span class="badge bg-warning bg-opacity-25 text-dark border border-warning border-opacity-50">${s}</span>`).join('')}
+                    </div>
+                  </div>
+                ` : `
+                  <div class="small mb-3 p-2 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
+                    <i class="bi bi-check-circle-fill me-1"></i> 100% Skill Match! You possess all required technical skills for this role.
+                  </div>
+                `}
+              </div>
+
+              <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-2">
+                <a href="internships.html?filter=recommended" class="btn btn-brand-outline btn-sm w-100">
+                  View Full Details & Apply <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSkillSuggestions(recs) {
+      const container = document.getElementById('dashboard-suggestions-list');
+      if (!container) return;
+
+      const missingFrequency = {};
+      for (const item of recs) {
+        for (const s of (item.missingSkills || [])) {
+          missingFrequency[s] = (missingFrequency[s] || 0) + 1;
+        }
+      }
+
+      const topMissing = Object.entries(missingFrequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4);
+
+      if (topMissing.length === 0) {
+        container.innerHTML = `
+          <li class="list-group-item bg-transparent text-success px-0">
+            <i class="bi bi-check-circle-fill me-2"></i> Excellent! Your resume covers the skills for all listed roles!
+          </li>
+        `;
+        return;
+      }
+
+      container.innerHTML = topMissing.map(([skill, count]) => `
+        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-2">
+          <div>
+            <i class="bi bi-arrow-up-right-circle text-primary me-2"></i>
+            <strong class="text-dark">${skill}</strong>
+            <small class="text-muted d-block ms-4">Required in ${count} matching opportunities</small>
+          </div>
+          <span class="badge bg-indigo bg-opacity-10 text-primary rounded-pill px-3 py-1">In Demand</span>
+        </li>
+      `).join('');
+    }
+
+    async function loadApplicationsTable() {
+      const tableBody = document.getElementById('applications-table-body');
+      if (!tableBody) return;
+
+      try {
+        const res = await Auth.authFetch('/api/applications');
+        const data = await res.json();
+
+        if (data.success && data.applications && data.applications.length > 0) {
+          tableBody.innerHTML = data.applications.slice(0, 5).map((app) => `
+            <tr>
+              <td>
+                <div class="fw-bold text-dark">${app.internship_title}</div>
+                <div class="small text-muted">${app.company_name}</div>
+              </td>
+              <td><span class="badge bg-light text-dark border">${app.work_mode}</span></td>
+              <td class="text-success fw-semibold small">${app.stipend}</td>
+              <td><span class="badge bg-primary rounded-pill px-3 py-1">${app.status}</span></td>
+              <td class="small text-muted">${new Date(app.click_timestamp || app.applied_at).toLocaleDateString()}</td>
+              <td>
+                <a href="applications.html" class="btn btn-outline-secondary btn-sm py-0 px-2">Manage</a>
+              </td>
+            </tr>
+          `).join('');
+        } else {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                No applications submitted yet. Browse <a href="internships.html" class="fw-bold text-primary">internship listings</a> and click Apply!
+              </td>
+            </tr>
+          `;
+        }
+      } catch (e) {
+        console.warn('Could not load applications:', e);
+      }
+    }
+  </script>
+</body>
+</html>

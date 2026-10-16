@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Documentation & Report — AI Internship Aggregator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      color: #1a1a1a;
+      background-color: #f8fafc;
+      line-height: 1.6;
+    }
+    .report-paper {
+      background: #ffffff;
+      max-width: 850px;
+      margin: 30px auto;
+      padding: 60px 70px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      border-radius: 8px;
+    }
+    .cover-title {
+      font-size: 26pt;
+      font-weight: bold;
+      color: #1e1b4b;
+      line-height: 1.25;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cover-subtitle {
+      font-size: 14pt;
+      color: #4338ca;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+    .section-heading {
+      font-size: 16pt;
+      font-weight: bold;
+      color: #1e293b;
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 5px;
+      margin-top: 35px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    .table-tech {
+      width: 100%;
+      margin: 15px 0;
+      border-collapse: collapse;
+      font-size: 11pt;
+    }
+    .table-tech th, .table-tech td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .table-tech th {
+      background-color: #eff6ff;
+      color: #1e3a8a;
+      font-weight: bold;
+    }
+    .workflow-step {
+      background-color: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      border-radius: 0 6px 6px 0;
+    }
+    @media print {
+      body { background: #ffffff; margin: 0; padding: 0; }
+      .report-paper { box-shadow: none; border: none; padding: 0; margin: 0; max-width: 100%; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Print & Download Toolbar (Hidden during print) -->
+  <div class="no-print bg-white border-bottom py-3 sticky-top shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <a href="index.html" class="btn btn-outline-secondary btn-sm me-2">
+          <i class="bi bi-arrow-left me-1"></i> Back to Platform
+        </a>
+        <span class="fw-bold text-dark d-none d-md-inline">AI Internship Aggregator — Official Project Report</span>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="/AI_Internship_Platform_Project_Report.pdf" download class="btn btn-primary btn-sm px-3">
+          <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Direct PDF
+        </a>
+        <button onclick="window.print()" class="btn btn-dark btn-sm px-3">
+          <i class="bi bi-printer-fill me-1"></i> Print / Save as PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-paper">
+    <!-- ==================== PAGE 1: TITLE / COVER PAGE ==================== -->
+    <div class="text-center py-4">
+      <div style="font-size: 13pt; font-weight: bold; color: #475569; letter-spacing: 1px; margin-bottom: 20px;">
+        A PROJECT REPORT ON
+      </div>
+
+      <div class="cover-title">
+        AI INTERNSHIP AGGREGATOR AND RECOMMENDATION PLATFORM
+      </div>
+
+      <div class="cover-subtitle">
+        An Intelligent Career Matching, Resume Analysis, and Application Tracking System
+      </div>
+
+      <hr style="border-top: 2px solid #2563eb; width: 60%; margin: 25px auto;">
+
+      <div style="font-size: 12pt; color: #334155; margin-bottom: 40px; line-height: 1.8;">
+        Submitted in partial fulfillment of the requirements for the degree of<br>
+        <strong>BACHELOR / MASTER OF TECHNOLOGY / COMPUTER APPLICATIONS</strong><br>
+        in Computer Science & Engineering / Information Technology
+      </div>
+
+      <div class="p-4 bg-light rounded-3 border text-start mx-auto" style="max-width: 550px; font-size: 11pt;">
+        <table style="width: 100%;">
+          <tr>
+            <td style="width: 40%; font-weight: bold; padding: 6px 0;">Project Title:</td>
+            <td>AI Internship Aggregator and Recommendation Platform</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 6px 0;">Domain:</td>
+            <td>Full-Stack Web Development, Applied NLP & Information Retrieval</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 6px 0;">Architecture:</td>
+            <td>RESTful Multi-Tier Architecture (Node.js, Express, SQLite)</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 6px 0;">Infrastructure:</td>
+            <td>100% Free of XAMPP, Apache, MySQL, PHP, and Paid API Keys</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; padding: 6px 0;">Academic Year:</td>
+            <td>2025 – 2026</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== PAGE 2: ABSTRACT ==================== -->
+    <h3 class="section-heading">1. Abstract</h3>
+    <p style="text-align: justify; font-size: 11.5pt; text-indent: 30px;">
+      The rapid evolution of modern software engineering requires collegiate students to discover internship opportunities that precisely align with their academic coursework and technical capabilities. Conventional job search portals aggregate thousands of unranked listings without transparent qualification analysis, leading to high rejection rates, candidate fatigue, and inefficient recruitment cycles. Furthermore, typical college projects frequently rely on legacy XAMPP/Apache/MySQL environments that suffer from port collisions, complex manual setup, and deployment fragility.
+    </p>
+    <p style="text-align: justify; font-size: 11.5pt; text-indent: 30px;">
+      To address these challenges, this project presents the <strong>AI Internship Aggregator and Recommendation Platform</strong>, a complete full-stack web application developed using <strong>Node.js</strong>, <strong>Express.js</strong>, and an embedded <strong>SQLite</strong> database engine. The platform eliminates the need for XAMPP, providing zero-configuration, self-contained persistence. The system incorporates an automated natural language processing (NLP) resume extraction pipeline that parses both PDF and DOCX formats into structured skill vectors without requiring paid third-party API keys.
+    </p>
+    <p style="text-align: justify; font-size: 11.5pt; text-indent: 30px;">
+      A transparent matching engine computes a deterministic <strong>Match Percentage</strong>:
+    </p>
+    <div class="text-center my-3 p-3 bg-light border rounded">
+      <strong>Match Percentage (%) = (Number of Matching Skills / Total Number of Required Skills) &times; 100</strong>
+    </div>
+    <p style="text-align: justify; font-size: 11.5pt; text-indent: 30px;">
+      The platform retrieves all eligible listings (exceeding 40+ curated opportunities across 25+ tech companies) without arbitrary caps or suppression of lower-match opportunities. An integrated Applicant Tracking System (ATS) manages applications across 8 status stages (Interested, Application Started, Applied, Assessment, Interview Scheduled, Offer Received, Rejected, Withdrawn) with personal notes and local interactive corporate portals, eliminating external browser SSL/privacy warnings.
+    </p>
+
+    <!-- ==================== TECHNOLOGIES USED ==================== -->
+    <h3 class="section-heading">2. Technologies Used</h3>
+    <table class="table-tech">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Layer / Module</th>
+          <th style="width: 30%;">Technology & Library</th>
+          <th>Description & Architectural Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Frontend Client</strong></td>
+          <td>HTML5, CSS3, JavaScript (ES6+), Bootstrap 5, Bootstrap Icons</td>
+          <td>Responsive user interface with blue/purple gradient theme, interactive modals, live search, multi-factor filtering, and dynamic KPI counters.</td>
+        </tr>
+        <tr>
+          <td><strong>Backend Server</strong></td>
+          <td>Node.js (v20+), Express.js Framework</td>
+          <td>Asynchronous RESTful API backend handling routing, multipart upload streaming, authentication middleware, and business logic.</td>
+        </tr>
+        <tr>
+          <td><strong>Database Engine</strong></td>
+          <td>SQLite3 (Embedded Relational DB), <code>sqlite3</code> driver</td>
+          <td>Single-file transactional database (<code>database/internship.db</code>) with foreign keys, indexes, and automated migrations. 100% XAMPP/MySQL free.</td>
+        </tr>
+        <tr>
+          <td><strong>Authentication & Security</strong></td>
+          <td>bcryptjs, jsonwebtoken (JWT), dotenv</td>
+          <td>Salted password hashing (cost factor 10), stateless bearer JWT tokens, protected routes, and multi-tenant student data isolation.</td>
+        </tr>
+        <tr>
+          <td><strong>Resume Parsing & NLP</strong></td>
+          <td>Multer, pdf-parse, mammoth, Regex Extractors</td>
+          <td>Multipart file processing, text stream extraction, binary stream fallback for damaged XRef headers, and technical keyword dictionary matching.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- ==================== PROJECT WORKFLOW ==================== -->
+    <h3 class="section-heading">3. Project Workflow & System Pipeline</h3>
+    <p style="font-size: 11pt;">
+      The system executes an end-to-end 5-phase operational workflow:
+    </p>
+
+    <div class="workflow-step">
+      <strong>Phase 1: Student Registration & Authentication</strong><br>
+      <span style="font-size: 10.5pt;">The student creates an account on <code>register.html</code>. Passwords are securely hashed with <code>bcrypt</code> and stored in SQLite. Upon login, a signed JWT token is issued and stored in client <code>localStorage</code>, authorizing subsequent protected API requests.</span>
+    </div>
+
+    <div class="workflow-step">
+      <strong>Phase 2: Resume Upload & Skill Extraction</strong><br>
+      <span style="font-size: 10.5pt;">The student uploads a PDF or DOCX resume on <code>upload-resume.html</code>. Multer validates file constraints and streams the document to the server. The parsing engine extracts raw text and matches it against a dictionary of 100+ technical competencies, updating the student's profile skills.</span>
+    </div>
+
+    <div class="workflow-step">
+      <strong>Phase 3: Recommendation & Gap Analysis</strong><br>
+      <span style="font-size: 10.5pt;">The recommendation service calculates intersection sets between student skills and internship requirements. Opportunities are sorted by match score descending. For each card, the student sees Matching Skills (green), Missing Skills (amber), and Suggested Skills to Learn.</span>
+    </div>
+
+    <div class="workflow-step">
+      <strong>Phase 4: Company Exploration & One-Click Application</strong><br>
+      <span style="font-size: 10.5pt;">Students can view full company headquarters details, view office locations on Google Maps, send email inquiries, or click <strong>Apply Now</strong>. Submitting records the application in SQLite, marks the status as <strong>Applied</strong>, and displays a celebratory confirmation modal. Dedicated local portals (<code>demo-application-portal.html</code> & <code>demo-company.html</code>) guarantee zero SSL/privacy errors.</span>
+    </div>
+
+    <div class="workflow-step">
+      <strong>Phase 5: Applicant Tracking System (ATS) Management</strong><br>
+      <span style="font-size: 10.5pt;">On <code>applications.html</code>, students monitor submissions across 8 lifecycle stages (Interested, Application Started, Applied, Assessment, Interview Scheduled, Offer Received, Rejected, Withdrawn). Students update stages, record interview notes, and review dynamic pipeline analytics. Multi-tenant isolation protects candidate privacy.</span>
+    </div>
+
+    <!-- ==================== DATABASE SCHEMA ==================== -->
+    <h3 class="section-heading">4. Relational Database Schema</h3>
+    <ul style="font-size: 10.5pt;">
+      <li><code>users</code>: Manages student credentials (id, name, email [UNIQUE], college_name, password [hash], created_at).</li>
+      <li><code>student_profiles</code>: Stores academic details and extracted skills (id, user_id [FK], degree, grad_year, skills [JSON], phone).</li>
+      <li><code>resumes</code>: Stores uploaded resume metadata and extracted text (id, user_id [FK], filename, extracted_text, detected_skills).</li>
+      <li><code>companies</code>: Curated technology organizations (id, name [UNIQUE], description, logo_url, address, city, state, country, website, contact_email).</li>
+      <li><code>internships</code>: Open opportunities (id, company_id [FK], title, category, work_mode, stipend, duration, required_skills [JSON], perks).</li>
+      <li><code>saved_internships</code>: Student bookmarks (id, user_id [FK], internship_id [FK], saved_at, UNIQUE constraint).</li>
+      <li><code>applications</code>: ATS tracking records (id, user_id [FK], internship_id [FK], company_id [FK], status, notes, click_timestamp, applied_at).</li>
+    </ul>
+
+    <!-- ==================== CONCLUSION ==================== -->
+    <h3 class="section-heading">5. Conclusion</h3>
+    <p style="text-align: justify; font-size: 11pt;">
+      The AI Internship Aggregator and Recommendation Platform represents an efficient, modern solution for collegiate career discovery. By utilizing Node.js, Express.js, and SQLite, the application operates completely independent of heavy legacy stacks like XAMPP or MySQL. The transparent matching algorithm, automated resume parsing, interactive corporate portals, and integrated ATS dashboard equip students with an intuitive, professional career tool.
+    </p>
+
+    <div class="mt-4 p-3 bg-light rounded text-center border" style="font-size: 10pt; color: #475569;">
+      <strong>AI Internship Aggregator and Recommendation Platform &copy; 2026</strong><br>
+      Verified Full-Stack Implementation &bull; Running on <code>http://localhost:3000</code>
+    </div>
+  </div>
+
+</body>
+</html>

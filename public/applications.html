@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Applications - Application Tracking System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Dynamic Navigation Bar Container -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Content -->
+  <main class="py-5" style="background-color: #f8fafc;">
+    <div class="container py-3">
+
+      <!-- Breadcrumbs & Heading -->
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small">
+              <li class="breadcrumb-item"><a href="index.html" class="text-decoration-none">Home</a></li>
+              <li class="breadcrumb-item"><a href="dashboard.html" class="text-decoration-none">Dashboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">My Applications</li>
+            </ol>
+          </nav>
+          <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-kanban text-primary me-2"></i> Application Tracking System (ATS)
+          </h2>
+          <p class="text-secondary mb-0">
+            Track your internship opportunities, log progression stages, maintain personal notes, and monitor your recruitment funnel.
+          </p>
+        </div>
+        <a href="internships.html" class="btn btn-brand btn-sm mt-3 mt-md-0">
+          <i class="bi bi-plus-circle me-1"></i> Discover More Internships
+        </a>
+      </div>
+
+      <!-- Application Statistics Summary Cards (Feature 6: Computed dynamically from student records) -->
+      <div class="row g-3 mb-4" id="stats-summary-row">
+        <div class="col-xl-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon blue"><i class="bi bi-folder2-open"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Total Tracked</div>
+              <h3 class="fw-bold mb-0 text-dark" id="stat-total-tracked">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon purple"><i class="bi bi-eye"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Interested</div>
+              <h3 class="fw-bold mb-0 text-dark" id="stat-interested">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="bi bi-send-check"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Marked Applied</div>
+              <h3 class="fw-bold mb-0 text-dark" id="stat-applied">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon amber"><i class="bi bi-mortarboard"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Assessments</div>
+              <h3 class="fw-bold mb-0 text-dark" id="stat-assessment">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon blue" style="background: rgba(99,102,241,0.12); color: #6366f1;"><i class="bi bi-calendar2-week"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Interviews Scheduled</div>
+              <h4 class="fw-bold mb-0 text-dark" id="stat-interviews">0</h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon green" style="background: rgba(16,185,129,0.18); color: #047857;"><i class="bi bi-trophy-fill"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Offers Received</div>
+              <h4 class="fw-bold mb-0 text-dark" id="stat-offers">0</h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon amber" style="background: rgba(239,68,68,0.12); color: #dc2626;"><i class="bi bi-x-octagon"></i></div>
+            <div>
+              <div class="small text-muted fw-semibold">Rejected / Withdrawn</div>
+              <h4 class="fw-bold mb-0 text-dark" id="stat-rejected">0</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Filters Toolbar -->
+      <div class="card card-custom p-4 mb-4 bg-white">
+        <div class="row g-3 align-items-end">
+          <!-- Search input -->
+          <div class="col-lg-4 col-md-6">
+            <label for="app-search-input" class="form-label small fw-bold text-secondary">Search Opportunity or Company</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+              <input type="text" id="app-search-input" class="form-control border-start-0 ps-0" placeholder="e.g. NexGen, Python, Engineer...">
+            </div>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="col-lg-3 col-md-6">
+            <label for="app-filter-status" class="form-label small fw-bold text-secondary">Application Status</label>
+            <select id="app-filter-status" class="form-select">
+              <option value="All">All Statuses</option>
+              <option value="Interested">Interested</option>
+              <option value="Application Started">Application Started</option>
+              <option value="Applied">Applied</option>
+              <option value="Assessment">Assessment</option>
+              <option value="Interview Scheduled">Interview Scheduled</option>
+              <option value="Offer Received">Offer Received</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Withdrawn">Withdrawn</option>
+            </select>
+          </div>
+
+          <!-- Sort order -->
+          <div class="col-lg-3 col-md-6">
+            <label for="app-sort-order" class="form-label small fw-bold text-secondary">Sort Timeline</label>
+            <select id="app-sort-order" class="form-select">
+              <option value="newest">Most Recent First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+
+          <!-- Reset Filter -->
+          <div class="col-lg-2 col-md-6 text-end">
+            <button id="btn-reset-app-filters" class="btn btn-outline-secondary w-100" title="Reset Filters">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Applications List Container -->
+      <div id="applications-container">
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted fw-semibold">Loading your tracked applications from SQLite database...</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Edit Status Modal (Feature 6) -->
+  <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold text-dark">
+            <i class="bi bi-arrow-repeat text-primary me-2"></i> Update Application Status
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <input type="hidden" id="status-modal-app-id">
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-secondary">Role & Company</label>
+            <div id="status-modal-title" class="fw-bold text-dark">Role Name</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="status-select-input" class="form-label small fw-bold text-secondary">Select New Stage</label>
+            <select id="status-select-input" class="form-select form-select-lg">
+              <option value="Interested">Interested (Bookmarked)</option>
+              <option value="Application Started">Application Started (Link Clicked)</option>
+              <option value="Applied">Applied (Form Submitted)</option>
+              <option value="Assessment">Assessment (Coding Test / Exam)</option>
+              <option value="Interview Scheduled">Interview Scheduled</option>
+              <option value="Offer Received">Offer Received</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Withdrawn">Withdrawn</option>
+            </select>
+          </div>
+          <p class="small text-muted mb-0">
+            Status updates persist in your SQLite account database and survive logouts.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-brand" id="btn-save-status-update">Save Status</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Personal Notes Modal (Feature 6) -->
+  <div class="modal fade" id="editNotesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold text-dark">
+            <i class="bi bi-pencil-square text-primary me-2"></i> Personal Application Notes
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <input type="hidden" id="notes-modal-app-id">
+          <div class="mb-2">
+            <div id="notes-modal-title" class="fw-bold text-dark">Role Name</div>
+          </div>
+          <div class="mb-3">
+            <label for="notes-textarea-input" class="form-label small fw-bold text-secondary">Notes & Next Steps</label>
+            <textarea id="notes-textarea-input" class="form-control" rows="5" placeholder="e.g. Completed technical round 1, need to review SQL and Node.js for next interview on Friday..."></textarea>
+          </div>
+          <small class="text-muted d-block">
+            These notes are private and associated exclusively with your student account.
+          </small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-brand" id="btn-save-notes-update">Save Notes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Footer Container -->
+  <div id="footer-container"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Global Scripts -->
+  <script src="js/auth.js"></script>
+
+  <script>
+    let myApplicationsList = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      Auth.renderNavbar('applications');
+      Auth.renderFooter();
+
+      if (!Auth.requireAuth()) return;
+
+      setupAppListeners();
+      loadApplicationsData();
+      loadStatsData();
+    });
+
+    function setupAppListeners() {
+      const searchInput = document.getElementById('app-search-input');
+      const statusSelect = document.getElementById('app-filter-status');
+      const sortSelect = document.getElementById('app-sort-order');
+      const resetBtn = document.getElementById('btn-reset-app-filters');
+
+      const triggerSearch = () => {
+        loadApplicationsData();
+      };
+
+      if (searchInput) searchInput.addEventListener('input', triggerSearch);
+      if (statusSelect) statusSelect.addEventListener('change', triggerSearch);
+      if (sortSelect) sortSelect.addEventListener('change', triggerSearch);
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (searchInput) searchInput.value = '';
+          if (statusSelect) statusSelect.value = 'All';
+          if (sortSelect) sortSelect.value = 'newest';
+          loadApplicationsData();
+        });
+      }
+
+      // Save Status button in modal
+      document.getElementById('btn-save-status-update').addEventListener('click', async () => {
+        const appId = document.getElementById('status-modal-app-id').value;
+        const newStatus = document.getElementById('status-select-input').value;
+
+        try {
+          const res = await Auth.authFetch(`/api/applications/${appId}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+          const data = await res.json();
+          if (data.success) {
+            Auth.showToast(data.message, 'success');
+            bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
+            loadApplicationsData();
+            loadStatsData();
+          } else {
+            Auth.showToast(data.message || 'Status update failed.', 'error');
+          }
+        } catch (e) {
+          Auth.showToast('Network error while updating status.', 'error');
+        }
+      });
+
+      // Save Notes button in modal
+      document.getElementById('btn-save-notes-update').addEventListener('click', async () => {
+        const appId = document.getElementById('notes-modal-app-id').value;
+        const notes = document.getElementById('notes-textarea-input').value;
+
+        try {
+          const res = await Auth.authFetch(`/api/applications/${appId}/notes`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notes })
+          });
+          const data = await res.json();
+          if (data.success) {
+            Auth.showToast(data.message, 'success');
+            bootstrap.Modal.getInstance(document.getElementById('editNotesModal')).hide();
+            loadApplicationsData();
+          } else {
+            Auth.showToast(data.message || 'Notes update failed.', 'error');
+          }
+        } catch (e) {
+          Auth.showToast('Network error while updating notes.', 'error');
+        }
+      });
+    }
+
+    async function loadStatsData() {
+      try {
+        const res = await Auth.authFetch('/api/applications/stats');
+        const data = await res.json();
+
+        if (data.success && data.stats) {
+          const s = data.stats;
+          document.getElementById('stat-total-tracked').textContent = s.totalTracked;
+          document.getElementById('stat-interested').textContent = s.interested;
+          document.getElementById('stat-applied').textContent = s.applied + (s.applicationStarted || 0);
+          document.getElementById('stat-assessment').textContent = s.assessment;
+          document.getElementById('stat-interviews').textContent = s.interviewScheduled;
+          document.getElementById('stat-offers').textContent = s.offerReceived;
+          document.getElementById('stat-rejected').textContent = s.rejected + s.withdrawn;
+        }
+      } catch (err) {
+        console.warn('Could not load application stats:', err);
+      }
+    }
+
+    async function loadApplicationsData() {
+      const container = document.getElementById('applications-container');
+      const search = document.getElementById('app-search-input')?.value || '';
+      const status = document.getElementById('app-filter-status')?.value || 'All';
+      const sort = document.getElementById('app-sort-order')?.value || 'newest';
+
+      try {
+        const url = `/api/applications?search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}&sort=${encodeURIComponent(sort)}`;
+        const res = await Auth.authFetch(url);
+        const data = await res.json();
+
+        if (data.success && data.applications) {
+          myApplicationsList = data.applications;
+          renderApplicationsList(data.applications);
+        } else {
+          container.innerHTML = `<div class="col-12 text-center text-muted py-5">Error loading applications.</div>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<div class="col-12 text-center text-danger py-5">Failed to fetch applications.</div>`;
+      }
+    }
+
+    function renderApplicationsList(apps) {
+      const container = document.getElementById('applications-container');
+      if (!container) return;
+
+      if (apps.length === 0) {
+        container.innerHTML = `
+          <div class="card card-custom p-5 text-center bg-white">
+            <div class="text-muted fs-1 mb-2"><i class="bi bi-inbox"></i></div>
+            <h5 class="fw-bold text-dark">No application records found</h5>
+            <p class="text-secondary small mb-3">You haven't tracked any opportunities with the selected filters.</p>
+            <div>
+              <a href="internships.html" class="btn btn-brand btn-sm px-4">
+                <i class="bi bi-briefcase me-1"></i> Browse Internships & Click Apply
+              </a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = apps.map((app) => {
+        const statusBadgeClass = getStatusBadgeClass(app.status);
+        const fullAddress = [app.company_address, app.company_city, app.company_state, app.company_country].filter(Boolean).join(', ') || app.internship_location;
+        const appDate = app.click_timestamp ? new Date(app.click_timestamp).toLocaleDateString() : 'N/A';
+        const updatedDate = app.updated_at ? new Date(app.updated_at).toLocaleDateString() : appDate;
+
+        return `
+          <div class="card card-custom p-4 mb-4 bg-white border">
+            <div class="row g-3 align-items-center">
+              <!-- Left: Company & Role Details -->
+              <div class="col-lg-6">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="brand-icon-box" style="width: 50px; height: 50px; font-size: 1.3rem;">
+                    ${(app.company_name || 'C')[0]}
+                  </div>
+                  <div>
+                    <h5 class="fw-bold text-dark mb-1">${app.internship_title}</h5>
+                    <div class="text-muted small fw-semibold mb-2">
+                      <i class="bi bi-building text-primary me-1"></i> ${app.company_name}
+                      &bull; <i class="bi bi-geo-alt text-danger me-1"></i> ${fullAddress}
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 small">
+                      <span class="badge bg-light text-dark border"><i class="bi bi-laptop me-1"></i> ${app.work_mode}</span>
+                      <span class="badge bg-light text-dark border"><i class="bi bi-cash me-1 text-success"></i> ${app.stipend}</span>
+                      <span class="badge bg-light text-dark border"><i class="bi bi-calendar-event me-1"></i> Clicked: ${appDate}</span>
+                      <span class="badge bg-light text-dark border"><i class="bi bi-arrow-clockwise me-1"></i> Updated: ${updatedDate}</span>
+                    </div>
+
+                    ${app.company_email ? `
+                      <div class="small text-muted mt-2">
+                        <i class="bi bi-envelope text-primary me-1"></i> Contact: <a href="mailto:${app.company_email}" class="text-decoration-none">${app.company_email}</a>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle: Current Status & Notes -->
+              <div class="col-lg-3">
+                <div class="p-3 bg-light rounded-3 border">
+                  <small class="text-muted d-block mb-1 fw-bold">Current Stage:</small>
+                  <span class="badge ${statusBadgeClass} px-3 py-2 rounded-pill fs-6 d-inline-block mb-2">
+                    ${app.status}
+                  </span>
+
+                  <div class="small mt-1">
+                    <strong>Notes:</strong>
+                    <div class="text-secondary text-truncate" style="max-width: 250px;" title="${app.notes || 'No notes added yet.'}">
+                      ${app.notes ? app.notes : '<span class="text-muted fst-italic">No notes logged yet.</span>'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: 4 Action Buttons -->
+              <div class="col-lg-3 text-lg-end">
+                <div class="d-flex flex-column gap-2">
+                  <!-- Open Application Link -->
+                  <a href="${(!app.official_url || app.official_url.includes('example.')) ? ('/demo-application-portal.html?id=' + app.internship_id) : app.official_url}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Open Application Portal
+                  </a>
+
+                  <!-- Update Status Button -->
+                  <button class="btn btn-brand btn-sm" onclick="openUpdateStatusModal(${app.application_id}, '${app.status}', '${app.internship_title} at ${app.company_name}')">
+                    <i class="bi bi-arrow-repeat me-1"></i> Update Status
+                  </button>
+
+                  <!-- Edit Notes Button -->
+                  <button class="btn btn-outline-secondary btn-sm" onclick="openEditNotesModal(${app.application_id}, \`${(app.notes || '').replace(/`/g, '\\`')}\`, '${app.internship_title}')">
+                    <i class="bi bi-pencil-square me-1"></i> Edit Notes
+                  </button>
+
+                  <!-- Remove Record Button -->
+                  <button class="btn btn-outline-danger btn-sm" onclick="deleteApplicationRecord(${app.application_id}, '${app.internship_title}')">
+                    <i class="bi bi-trash3 me-1"></i> Remove Record
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getStatusBadgeClass(status) {
+      switch (status) {
+        case 'Offer Received': return 'bg-success text-white';
+        case 'Interview Scheduled': return 'bg-primary text-white';
+        case 'Assessment': return 'bg-warning text-dark';
+        case 'Applied': return 'bg-info text-white';
+        case 'Application Started': return 'bg-secondary text-white';
+        case 'Interested': return 'bg-dark text-white';
+        case 'Rejected': return 'bg-danger text-white';
+        case 'Withdrawn': return 'bg-secondary text-light';
+        default: return 'bg-primary text-white';
+      }
+    }
+
+    function openUpdateStatusModal(appId, currentStatus, title) {
+      document.getElementById('status-modal-app-id').value = appId;
+      document.getElementById('status-modal-title').textContent = title;
+      document.getElementById('status-select-input').value = currentStatus;
+      new bootstrap.Modal(document.getElementById('updateStatusModal')).show();
+    }
+
+    function openEditNotesModal(appId, notes, title) {
+      document.getElementById('notes-modal-app-id').value = appId;
+      document.getElementById('notes-modal-title').textContent = title;
+      document.getElementById('notes-textarea-input').value = notes || '';
+      new bootstrap.Modal(document.getElementById('editNotesModal')).show();
+    }
+
+    async function deleteApplicationRecord(appId, title) {
+      if (!confirm(`Are you sure you want to remove the tracking record for "${title}"?`)) return;
+
+      try {
+        const res = await Auth.authFetch(`/api/applications/${appId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          Auth.showToast(data.message, 'info');
+          loadApplicationsData();
+          loadStatsData();
+        } else {
+          Auth.showToast(data.message || 'Failed to remove record.', 'error');
+        }
+      } catch (err) {
+        Auth.showToast('Network error while deleting record.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

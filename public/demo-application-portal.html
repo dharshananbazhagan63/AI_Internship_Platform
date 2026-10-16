@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate Career Portal — AI Internship Aggregator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <!-- Google Fonts & Bootstrap 5 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .portal-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+      color: #ffffff;
+      padding: 3rem 0 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .company-avatar {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      border: 3px solid rgba(255,255,255,0.2);
+      background-color: #ffffff;
+    }
+    .spec-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .spec-badge {
+      font-size: 0.85rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 50rem;
+      font-weight: 600;
+    }
+    .skill-pill-match {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .skill-pill-miss {
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .application-box {
+      position: sticky;
+      top: 90px;
+      background: #ffffff;
+      border: 2px solid #e0e7ff;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.08);
+    }
+    .success-celebration {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand navbar-brand-logo" href="index.html">
+        <div class="brand-icon-box">
+          <i class="bi bi-cpu-fill"></i>
+        </div>
+        <span>AI Internship Platform</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link" href="internships.html"><i class="bi bi-briefcase me-1"></i> Find Internships</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="saved.html"><i class="bi bi-bookmark-heart me-1"></i> Saved</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="applications.html"><i class="bi bi-kanban me-1"></i> My Applications</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <a href="internships.html" class="btn btn-outline-secondary btn-sm px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Catalog
+          </a>
+          <div id="auth-buttons">
+            <!-- Rendered by auth.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Loading Indicator -->
+  <div id="portal-loading" class="text-center py-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+    <p class="text-muted mt-3 fw-semibold">Connecting to Host Employer Career Portal...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="portal-error" class="container py-5 text-center d-none">
+    <div class="card border-0 shadow-sm p-5 mx-auto" style="max-width: 550px;">
+      <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3.5rem;"></i>
+      <h4 class="fw-bold text-dark mt-3">Internship Opportunity Not Found</h4>
+      <p class="text-secondary small">The requested internship listing could not be loaded or may have concluded its application cycle.</p>
+      <div class="mt-3">
+        <a href="internships.html" class="btn btn-brand px-4"><i class="bi bi-briefcase me-1"></i> Browse Active Internships</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Portal Content -->
+  <main id="portal-content" class="d-none">
+    <!-- Portal Header Banner -->
+    <header class="portal-banner">
+      <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 small">
+              <li class="breadcrumb-item"><a href="internships.html" class="text-light text-decoration-none opacity-75">Internships</a></li>
+              <li class="breadcrumb-item"><a href="#" id="breadcrumb-company" class="text-light text-decoration-none opacity-75">Company</a></li>
+              <li class="breadcrumb-item active text-white" aria-current="page" id="breadcrumb-title">Role Title</li>
+            </ol>
+          </nav>
+          <div class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold">
+            <i class="bi bi-shield-check me-1"></i> Verified Career Portal
+          </div>
+        </div>
+
+        <div class="row align-items-center g-4">
+          <div class="col-auto">
+            <img id="portal-company-logo" src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=128" alt="Company Logo" class="company-avatar">
+          </div>
+          <div class="col">
+            <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+              <span id="portal-company-name" class="fw-bold fs-5 text-light">Company Name</span>
+              <a id="portal-btn-company-profile" href="#" target="_blank" class="btn btn-outline-light btn-sm py-0 px-2 rounded-pill small" style="font-size: 0.75rem;">
+                <i class="bi bi-building me-1"></i> View Company Profile
+              </a>
+            </div>
+            <h1 id="portal-role-title" class="fw-bold mb-2 text-white fs-3">Role Title</h1>
+            <div class="d-flex flex-wrap align-items-center gap-2 small text-light opacity-90">
+              <span id="portal-category" class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">Category</span>
+              <span><i class="bi bi-geo-alt me-1"></i> <span id="portal-location">Location</span></span>
+              <span>•</span>
+              <span><i class="bi bi-laptop me-1"></i> <span id="portal-work-mode">Remote</span></span>
+              <span>•</span>
+              <span><i class="bi bi-cash-stack me-1"></i> <span id="portal-stipend" class="text-warning fw-bold">$1,200 / month</span></span>
+              <span>•</span>
+              <span><i class="bi bi-calendar3 me-1"></i> <span id="portal-duration">3 Months</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Body -->
+    <div class="container py-4">
+      <div class="row g-4">
+        <!-- Left: Role Details & Specs -->
+        <div class="col-lg-7">
+          <!-- Overview Card -->
+          <div class="spec-card">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-text text-primary me-2"></i> Role Description & Responsibilities</h5>
+            <p id="portal-description" class="text-secondary" style="line-height: 1.7; font-size: 0.95rem;">
+              Description placeholder...
+            </p>
+
+            <h6 class="fw-bold text-dark mt-4 mb-2"><i class="bi bi-mortarboard text-indigo me-2"></i> Eligibility Requirements</h6>
+            <div class="p-3 bg-light rounded-3 border">
+              <p id="portal-eligibility" class="text-secondary small mb-0">Eligibility placeholder...</p>
+            </div>
+          </div>
+
+          <!-- Required Skills & Student Match Card -->
+          <div class="spec-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h5 class="fw-bold text-dark mb-0"><i class="bi bi-stars text-warning me-2"></i> Required Technical Skills</h5>
+              <span id="portal-match-badge" class="badge bg-primary text-white px-3 py-1 rounded-pill small">Skill Alignment</span>
+            </div>
+            <p class="small text-muted mb-3">Skills highlighted in green are present on your uploaded resume/profile. Matching skills improve candidate selection ranking.</p>
+            <div id="portal-skills-container" class="d-flex flex-wrap gap-2 mb-3">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
+          <!-- Perks & Benefits Card -->
+          <div class="spec-card">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-gift text-success me-2"></i> Perks & Mentorship Benefits</h5>
+            <ul id="portal-perks-list" class="list-unstyled row g-2 mb-0">
+              <!-- Dynamically populated -->
+            </ul>
+          </div>
+
+          <!-- Host Organization Info Card -->
+          <div class="spec-card">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-building-check text-info me-2"></i> Host Organization Headquarters</h5>
+            <p id="portal-company-desc" class="text-secondary small mb-3">Company summary...</p>
+            <div class="row g-2 small text-secondary">
+              <div class="col-sm-6">
+                <strong><i class="bi bi-geo-alt-fill text-danger me-1"></i> Address:</strong>
+                <div id="portal-company-address" class="text-muted mt-1">Address...</div>
+              </div>
+              <div class="col-sm-6">
+                <strong><i class="bi bi-envelope-check-fill text-primary me-1"></i> Recruitment Contact:</strong>
+                <div id="portal-recruitment-email" class="text-muted mt-1">careers@...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Application Submission Form -->
+        <div class="col-lg-5">
+          <div class="application-box">
+            <!-- Pre-submission Form -->
+            <div id="form-container">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <h4 class="fw-bold text-dark mb-0">Submit Application</h4>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill small fw-semibold">
+                  <i class="bi bi-send-check me-1"></i> Direct Submission
+                </span>
+              </div>
+              <p class="small text-muted mb-4">Complete your candidate submission below. Your profile details have been automatically pre-filled.</p>
+
+              <!-- Guest Warning if not logged in -->
+              <div id="guest-alert" class="alert alert-warning border-warning-subtle small d-none" role="alert">
+                <i class="bi bi-info-circle-fill me-1"></i> You are applying in guest mode. <a href="login.html" class="fw-bold text-dark text-decoration-underline">Log in</a> to automatically link this submission to your Student ATS Dashboard.
+              </div>
+
+              <form id="portal-application-form">
+                <!-- Candidate Name -->
+                <div class="mb-3">
+                  <label for="app-name" class="form-label small fw-bold text-dark">Full Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" id="app-name" required placeholder="Your Full Name">
+                </div>
+
+                <!-- Candidate Email -->
+                <div class="mb-3">
+                  <label for="app-email" class="form-label small fw-bold text-dark">Email Address <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control form-control-sm" id="app-email" required placeholder="name@college.edu">
+                </div>
+
+                <!-- College / University -->
+                <div class="mb-3">
+                  <label for="app-college" class="form-label small fw-bold text-dark">College / University <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" id="app-college" required placeholder="University / Institute Name">
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                  <label for="app-phone" class="form-label small fw-bold text-dark">Phone Number</label>
+                  <input type="tel" class="form-control form-control-sm" id="app-phone" placeholder="+1 (555) 000-0000">
+                </div>
+
+                <!-- Resume Attachment Badge -->
+                <div class="mb-3 p-3 bg-light rounded-3 border">
+                  <label class="form-label small fw-bold text-dark d-block mb-1">Resume Verification Status</label>
+                  <div id="resume-status-badge" class="small text-success fw-semibold">
+                    <i class="bi bi-file-earmark-pdf-fill me-1 text-danger"></i> Profile Resume Synced & Attached
+                  </div>
+                  <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Extracted resume skills are shared with the hiring manager.</small>
+                </div>
+
+                <!-- Portfolio / GitHub URL -->
+                <div class="mb-3">
+                  <label for="app-portfolio" class="form-label small fw-bold text-dark">Portfolio / GitHub / LinkedIn URL</label>
+                  <input type="url" class="form-control form-control-sm" id="app-portfolio" placeholder="https://github.com/yourusername">
+                </div>
+
+                <!-- Statement of Interest / Note -->
+                <div class="mb-3">
+                  <label for="app-notes" class="form-label small fw-bold text-dark">Statement of Interest / Note to Employer</label>
+                  <textarea class="form-control form-control-sm" id="app-notes" rows="3" placeholder="Briefly introduce your qualifications and why this opportunity interests you..."></textarea>
+                </div>
+
+                <!-- Confirmation Checkbox -->
+                <div class="form-check mb-4">
+                  <input class="form-check-input" type="checkbox" id="app-confirm" required checked>
+                  <label class="form-check-label small text-secondary" for="app-confirm">
+                    I confirm that the academic qualifications and skills submitted are accurate.
+                  </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="btn-submit" class="btn btn-brand w-100 py-2 fs-6 shadow-sm">
+                  <i class="bi bi-send-fill me-1"></i> Submit Application to Company
+                </button>
+              </form>
+            </div>
+
+            <!-- Post-submission Success State -->
+            <div id="success-container" class="success-celebration text-center py-4">
+              <div class="display-3 text-success mb-3">
+                <i class="bi bi-patch-check-fill text-success"></i>
+              </div>
+              <h3 class="fw-bold text-dark mb-2 text-gradient">Applied Successfully! 🎉</h3>
+              <p class="text-secondary small mb-4">
+                Congratulations! Your application for <strong id="success-role-title" class="text-dark">Role</strong> at <strong id="success-company-name" class="text-dark">Company</strong> has been applied successfully!
+              </p>
+
+              <div class="p-3 bg-light rounded-3 border mb-4 text-start small">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="text-muted">Tracking Stage:</span>
+                  <span class="badge bg-success">Applied</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="text-muted">Submission Channel:</span>
+                  <span class="fw-semibold text-dark">Demonstration Career Portal</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Recorded Timestamp:</span>
+                  <span class="fw-semibold text-dark">Just Now</span>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2">
+                <a href="applications.html" class="btn btn-brand py-2">
+                  <i class="bi bi-kanban me-1"></i> View in My Applications (ATS)
+                </a>
+                <a href="internships.html" class="btn btn-outline-secondary py-2">
+                  <i class="bi bi-search me-1"></i> Explore More Internships
+                </a>
+                <a id="success-btn-company" href="#" class="btn btn-outline-primary py-2">
+                  <i class="bi bi-building me-1"></i> Visit Company Profile
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-custom mt-auto py-4 bg-white border-top">
+    <div class="container text-center text-muted small">
+      <p class="mb-1">AI Internship Aggregator and Recommendation Platform &copy; 2026. All rights reserved.</p>
+      <p class="mb-0 text-secondary" style="font-size: 0.8rem;">Runs with Node.js, Express, and SQLite — 100% Free of XAMPP, Apache, and MySQL.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    let currentInternshipId = null;
+    let internshipData = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Parse ID from URL query param
+      const urlParams = new URLSearchParams(window.location.search);
+      currentInternshipId = urlParams.get('id');
+
+      if (!currentInternshipId) {
+        document.getElementById('portal-loading').classList.add('d-none');
+        document.getElementById('portal-error').classList.remove('d-none');
+        return;
+      }
+
+      await loadPortalData();
+      setupFormSubmission();
+    });
+
+    async function loadPortalData() {
+      try {
+        // Fetch internship details
+        const headers = {};
+        const token = localStorage.getItem('token');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(`/api/internships/${currentInternshipId}`, { headers });
+        const data = await res.json();
+
+        if (!data.success || !data.internship) {
+          document.getElementById('portal-loading').classList.add('d-none');
+          document.getElementById('portal-error').classList.remove('d-none');
+          return;
+        }
+
+        internshipData = data.internship;
+        const comp = internshipData.company_details || {};
+
+        // Render page title and headers
+        document.title = `${internshipData.title} at ${internshipData.company} — Career Portal`;
+        document.getElementById('breadcrumb-company').textContent = internshipData.company;
+        document.getElementById('breadcrumb-company').href = `/demo-company.html?id=${comp.id || internshipData.company_id || 1}`;
+        document.getElementById('breadcrumb-title').textContent = internshipData.title;
+
+        // Banner details
+        document.getElementById('portal-company-logo').src = comp.logo_url || 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=128';
+        document.getElementById('portal-company-logo').onerror = function() {
+          this.src = 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=128';
+        };
+        document.getElementById('portal-company-name').textContent = internshipData.company;
+        document.getElementById('portal-btn-company-profile').href = `/demo-company.html?id=${comp.id || internshipData.company_id || 1}`;
+        document.getElementById('portal-role-title').textContent = internshipData.title;
+        document.getElementById('portal-category').textContent = internshipData.category;
+        document.getElementById('portal-location').textContent = internshipData.location;
+        document.getElementById('portal-work-mode').textContent = internshipData.work_mode;
+        document.getElementById('portal-stipend').textContent = internshipData.stipend || 'Competitive';
+        document.getElementById('portal-duration').textContent = internshipData.duration;
+
+        // Overview & Specs
+        document.getElementById('portal-description').textContent = internshipData.description;
+        document.getElementById('portal-eligibility').textContent = internshipData.eligibility;
+
+        // Technical Skills
+        const skillsContainer = document.getElementById('portal-skills-container');
+        skillsContainer.innerHTML = '';
+        const matchingSet = new Set(internshipData.matchingSkills || []);
+
+        (internshipData.required_skills || []).forEach(skill => {
+          const isMatch = matchingSet.has(skill);
+          const badge = document.createElement('span');
+          badge.className = isMatch ? 'skill-pill-match' : 'skill-pill-miss';
+          badge.innerHTML = isMatch 
+            ? `<i class="bi bi-check-circle-fill text-success"></i> ${skill}`
+            : `<i class="bi bi-dot"></i> ${skill}`;
+          skillsContainer.appendChild(badge);
+        });
+
+        if (internshipData.matchScore !== null) {
+          const isFullMatch = internshipData.missingSkills && internshipData.missingSkills.length === 0;
+          document.getElementById('portal-match-badge').textContent = isFullMatch ? '100% Match Qualified' : 'Skill Matched';
+          document.getElementById('portal-match-badge').className = `badge ${isFullMatch ? 'bg-success' : 'bg-primary'} px-3 py-1 rounded-pill small`;
+        }
+
+        // Perks
+        const perksList = document.getElementById('portal-perks-list');
+        perksList.innerHTML = '';
+        const perks = internshipData.perks || ['Mentorship Program', 'Certificate of Completion', 'Flexible Work Schedule'];
+        perks.forEach(perk => {
+          const li = document.createElement('li');
+          li.className = 'col-sm-6 small text-secondary d-flex align-items-center gap-2';
+          li.innerHTML = `<i class="bi bi-check2-circle text-primary"></i> <span>${perk}</span>`;
+          perksList.appendChild(li);
+        });
+
+        // Company Details
+        document.getElementById('portal-company-desc').textContent = comp.description || 'Enterprise Technology Innovator';
+        const fullAddr = [comp.address, comp.city, comp.state, comp.country].filter(Boolean).join(', ') || internshipData.location;
+        document.getElementById('portal-company-address').textContent = fullAddr;
+        document.getElementById('portal-recruitment-email').textContent = comp.recruitment_email || comp.contact_email || 'careers@' + internshipData.company.toLowerCase().replace(/[^a-z]/g, '') + '.com';
+
+        // Pre-populate application form if logged in
+        if (Auth.isLoggedIn()) {
+          const user = Auth.getUser();
+          if (user) {
+            document.getElementById('app-name').value = user.name || '';
+            document.getElementById('app-email').value = user.email || '';
+            document.getElementById('app-college').value = user.college_name || '';
+          }
+          // Fetch student profile for phone & resume
+          try {
+            const profileRes = await Auth.authFetch('/api/profile');
+            const profileData = await profileRes.json();
+            if (profileData.success && profileData.profile) {
+              if (profileData.profile.phone) document.getElementById('app-phone').value = profileData.profile.phone;
+              if (profileData.profile.github_url) document.getElementById('app-portfolio').value = profileData.profile.github_url;
+            }
+            if (profileData.success && profileData.resume) {
+              document.getElementById('resume-status-badge').innerHTML = 
+                `<i class="bi bi-file-earmark-check-fill text-success me-1"></i> Verified Resume: <strong>${profileData.resume.original_name || 'Uploaded Resume'}</strong>`;
+            }
+          } catch (e) {
+            // Profile fetch optional
+          }
+        } else {
+          document.getElementById('guest-alert').classList.remove('d-none');
+          document.getElementById('resume-status-badge').innerHTML = 
+            `<i class="bi bi-info-circle text-muted me-1"></i> Profile Resume not linked (Guest Mode)`;
+        }
+
+        // Show content
+        document.getElementById('portal-loading').classList.add('d-none');
+        document.getElementById('portal-content').classList.remove('d-none');
+
+      } catch (err) {
+        console.error('Error loading portal data:', err);
+        document.getElementById('portal-loading').classList.add('d-none');
+        document.getElementById('portal-error').classList.remove('d-none');
+      }
+    }
+
+    function setupFormSubmission() {
+      const form = document.getElementById('portal-application-form');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const btn = document.getElementById('btn-submit');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Submitting to Employer...`;
+
+        const notes = document.getElementById('app-notes').value.trim();
+        const portfolioUrl = document.getElementById('app-portfolio').value.trim();
+
+        try {
+          if (Auth.isLoggedIn()) {
+            const res = await Auth.authFetch(`/api/internships/${currentInternshipId}/portal-submit`, {
+              method: 'POST',
+              body: JSON.stringify({ notes, portfolioUrl })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              showSuccessState();
+            } else {
+              Auth.showToast(data.message || 'Failed to submit application.', 'error');
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            }
+          } else {
+            // Guest submission simulation
+            Auth.showToast('Application session recorded! Please log in to permanently track this in your ATS.', 'info');
+            showSuccessState();
+          }
+        } catch (err) {
+          console.error('Submission error:', err);
+          Auth.showToast('Network error while submitting application.', 'error');
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      });
+    }
+
+    function showSuccessState() {
+      document.getElementById('form-container').classList.add('d-none');
+      document.getElementById('success-container').style.display = 'block';
+
+      if (internshipData) {
+        document.getElementById('success-role-title').textContent = internshipData.title;
+        document.getElementById('success-company-name').textContent = internshipData.company;
+        const comp = internshipData.company_details || {};
+        document.getElementById('success-btn-company').href = `/demo-company.html?id=${comp.id || internshipData.company_id || 1}`;
+      }
+
+      Auth.showToast('Applied Successfully! 🎉 Your application has been officially submitted.', 'success');
+    }
+  </script>
+</body>
+</html>

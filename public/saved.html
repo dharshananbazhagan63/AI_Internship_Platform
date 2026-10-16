@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Internships - AI Internship Platform</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Dynamic Navigation Bar Container -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Content -->
+  <main class="py-5" style="background-color: #f8fafc;">
+    <div class="container py-3">
+
+      <!-- Breadcrumbs & Heading -->
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small">
+              <li class="breadcrumb-item"><a href="index.html" class="text-decoration-none">Home</a></li>
+              <li class="breadcrumb-item"><a href="dashboard.html" class="text-decoration-none">Dashboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Saved Internships</li>
+            </ol>
+          </nav>
+          <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-bookmark-heart text-warning me-2"></i> Bookmarked & Saved Internships
+          </h2>
+          <p class="text-secondary mb-0">
+            Review your shortlisted roles, evaluate matching qualifications, and apply whenever you are ready.
+          </p>
+        </div>
+        <div id="saved-count-badge" class="badge bg-white text-secondary border px-3 py-2 rounded-pill mt-2 mt-md-0 fw-semibold">
+          Loading saved listings...
+        </div>
+      </div>
+
+      <!-- Saved Cards Grid -->
+      <div class="row" id="saved-internships-grid">
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted fw-semibold">Loading your bookmarked internships...</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Complete Company Details Modal (Feature 3) -->
+  <div class="modal fade" id="internshipDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <div>
+            <div class="badge bg-secondary bg-opacity-10 text-dark mb-1">Demonstration Listing & Verified Details</div>
+            <h4 class="modal-title fw-bold text-dark mb-0" id="modal-title">Internship Details</h4>
+            <div class="text-muted small mt-1">
+              <span id="modal-company-name" class="fw-bold text-primary">Company Name</span>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <!-- Company Overview -->
+          <div class="card p-3 mb-4 bg-light border">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-building text-primary me-2"></i> Company Overview</h6>
+            <p class="small text-secondary mb-3" id="modal-company-desc">Description</p>
+            <div class="row g-2 small">
+              <div class="col-md-6">
+                <strong><i class="bi bi-geo-alt text-danger me-1"></i> Address:</strong>
+                <span id="modal-company-address" class="text-dark">Address</span>
+              </div>
+              <div class="col-md-6">
+                <strong><i class="bi bi-envelope text-info me-1"></i> Contact Email:</strong>
+                <span id="modal-contact-email" class="text-dark">email</span>
+              </div>
+              <div class="col-md-12">
+                <strong><i class="bi bi-person-check text-success me-1"></i> Recruitment Email:</strong>
+                <span id="modal-recruitment-email" class="text-dark">careers</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Specs -->
+          <div class="row g-3 mb-4">
+            <div class="col-sm-3 col-6">
+              <div class="p-2 bg-light rounded-3 border">
+                <small class="text-muted d-block">Work Mode</small>
+                <strong id="modal-mode" class="text-dark">Remote</strong>
+              </div>
+            </div>
+            <div class="col-sm-3 col-6">
+              <div class="p-2 bg-light rounded-3 border">
+                <small class="text-muted d-block">Stipend</small>
+                <strong id="modal-stipend" class="text-success">$1,200/mo</strong>
+              </div>
+            </div>
+            <div class="col-sm-3 col-6">
+              <div class="p-2 bg-light rounded-3 border">
+                <small class="text-muted d-block">Duration</small>
+                <strong id="modal-duration" class="text-dark">3 Months</strong>
+              </div>
+            </div>
+            <div class="col-sm-3 col-6">
+              <div class="p-2 bg-light rounded-3 border">
+                <small class="text-muted d-block">Deadline</small>
+                <strong id="modal-deadline" class="text-danger">Ongoing</strong>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-dark mb-2">Eligibility Criteria</h6>
+          <p class="small text-secondary mb-3" id="modal-eligibility"></p>
+
+          <h6 class="fw-bold text-dark mb-2">Job Description</h6>
+          <p class="small text-secondary mb-3" id="modal-description"></p>
+
+          <h6 class="fw-bold text-dark mb-2">Required Skills</h6>
+          <div class="d-flex flex-wrap gap-1 mb-4" id="modal-required-skills"></div>
+
+          <!-- Action Buttons -->
+          <div class="border-top pt-3">
+            <h6 class="fw-bold text-dark mb-2">Action Options</h6>
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-outline-primary btn-sm" id="modal-btn-website">
+                <i class="bi bi-globe me-1"></i> View Website
+              </button>
+              <button type="button" class="btn btn-outline-success btn-sm" id="modal-btn-maps">
+                <i class="bi bi-geo-alt-fill me-1"></i> View on Google Maps
+              </button>
+              <button type="button" class="btn btn-outline-info btn-sm text-dark" id="modal-btn-email">
+                <i class="bi bi-envelope-at-fill me-1"></i> Email Company
+              </button>
+              <button type="button" class="btn btn-brand btn-sm" id="modal-btn-apply">
+                <i class="bi bi-send me-1"></i> Apply Now
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm ms-auto" data-bs-dismiss="modal">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applied Successfully Modal -->
+  <div class="modal fade" id="appliedSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg text-center p-4" style="border-radius: 20px;">
+        <div class="modal-body p-0">
+          <div class="mb-3">
+            <div class="mx-auto d-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle" style="width: 80px; height: 80px; font-size: 2.75rem;">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+          </div>
+          <h4 class="fw-bold text-dark mb-1">Applied Successfully! 🎉</h4>
+          <p class="text-secondary small mb-3">
+            Your application for <strong id="success-modal-role" class="text-dark">Role Title</strong> at <strong id="success-modal-company" class="text-dark">Company Name</strong> has been submitted.
+          </p>
+
+          <div class="p-3 bg-light rounded-3 border text-start small mb-4">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted"><i class="bi bi-flag-fill me-1 text-primary"></i> Application Status:</span>
+              <span class="badge bg-success px-2 py-1"><i class="bi bi-check-circle me-1"></i> Applied</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted"><i class="bi bi-building me-1 text-indigo"></i> Host Organization:</span>
+              <span class="fw-semibold text-dark" id="success-modal-comp-name">Company</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted"><i class="bi bi-calendar-check me-1 text-secondary"></i> Submitted Date:</span>
+              <span class="fw-semibold text-dark" id="success-modal-date">Today</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted"><i class="bi bi-file-earmark-person me-1 text-success"></i> Credentials:</span>
+              <span class="text-success fw-semibold"><i class="bi bi-check2 me-1"></i> Profile Resume Synced</span>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <a href="applications.html" class="btn btn-brand py-2">
+              <i class="bi bi-kanban me-1"></i> View in My Applications (ATS)
+            </a>
+            <a id="success-modal-portal-btn" href="#" target="_blank" class="btn btn-outline-primary py-2">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Open Employer Career Portal
+            </a>
+            <button type="button" class="btn btn-light text-secondary py-2" data-bs-dismiss="modal">
+              Continue Browsing
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Footer Container -->
+  <div id="footer-container"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Global Scripts -->
+  <script src="js/auth.js"></script>
+
+  <script>
+    let savedList = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      Auth.renderNavbar('saved');
+      Auth.renderFooter();
+
+      if (!Auth.requireAuth()) return;
+
+      loadSavedInternships();
+    });
+
+    async function loadSavedInternships() {
+      const container = document.getElementById('saved-internships-grid');
+      const badge = document.getElementById('saved-count-badge');
+
+      try {
+        const res = await Auth.authFetch('/api/internships/saved');
+        const data = await res.json();
+
+        if (data.success && data.savedInternships) {
+          savedList = data.savedInternships;
+          badge.textContent = `${data.count} Saved Opportunity${data.count === 1 ? '' : 'ies'}`;
+          renderSavedList(data.savedInternships);
+        } else {
+          container.innerHTML = `<div class="col-12 text-center text-muted py-5">Error loading saved internships.</div>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<div class="col-12 text-center text-danger py-5">Failed to load saved listings.</div>`;
+      }
+    }
+
+    function renderSavedList(items) {
+      const container = document.getElementById('saved-internships-grid');
+      if (!container) return;
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="card card-custom p-5 text-center bg-white">
+              <div class="text-muted fs-1 mb-2"><i class="bi bi-bookmark-dash"></i></div>
+              <h5 class="fw-bold text-dark">No saved internships yet</h5>
+              <p class="text-secondary small mb-3">Explore matching internships and bookmark roles to review them anytime.</p>
+              <div>
+                <a href="internships.html" class="btn btn-brand btn-sm px-4">
+                  <i class="bi bi-compass me-1"></i> Browse Opportunities
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items.map((item) => {
+        let matchBadgeHtml = '';
+        if (item.matchScore !== null && item.matchScore !== undefined) {
+          if (item.missingSkills && item.missingSkills.length === 0) {
+            matchBadgeHtml = `<span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1 rounded-pill small fw-semibold"><i class="bi bi-patch-check-fill me-1"></i> 100% Match</span>`;
+          } else {
+            matchBadgeHtml = `<span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill small fw-semibold"><i class="bi bi-stars me-1"></i> Skill Matched</span>`;
+          }
+        }
+
+        const savedDate = item.saved_at ? new Date(item.saved_at).toLocaleDateString() : 'Recently';
+
+        return `
+          <div class="col-lg-6 mb-4">
+            <div class="card card-custom h-100 p-4 bg-white d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill fw-semibold">
+                    ${item.category}
+                  </span>
+                  ${matchBadgeHtml}
+                </div>
+
+                <h5 class="fw-bold mb-1 text-dark">${item.title}</h5>
+                <div class="text-muted small fw-semibold mb-3">
+                  <i class="bi bi-building text-primary me-1"></i> ${item.company} &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-laptop me-1"></i> ${item.work_mode}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-cash me-1 text-success"></i> ${item.stipend}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-calendar-event me-1"></i> Saved on ${savedDate}</span>
+                </div>
+
+                <p class="small text-secondary mb-3">${item.description}</p>
+
+                <div class="mb-3">
+                  <small class="text-muted d-block mb-1 fw-bold">Required Skills:</small>
+                  <div class="d-flex flex-wrap gap-1">
+                    ${(item.required_skills || []).map((s) => `<span class="skill-tag">${s}</span>`).join('')}
+                  </div>
+                </div>
+
+                ${item.missingSkills && item.missingSkills.length > 0 ? `
+                  <div class="small mb-3 p-2 rounded bg-light border border-warning border-opacity-25">
+                    <div class="fw-semibold text-dark mb-1 small">
+                      <i class="bi bi-lightbulb-fill text-warning me-1"></i> Additional Skills Required for 100% Match:
+                    </div>
+                    <div class="d-flex flex-wrap gap-1">
+                      ${item.missingSkills.map((s) => `<span class="badge bg-warning bg-opacity-25 text-dark border border-warning border-opacity-50 small">${s}</span>`).join('')}
+                    </div>
+                  </div>
+                ` : `
+                  <div class="small mb-3 p-2 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
+                    <i class="bi bi-check-circle-fill me-1"></i> 100% Skill Match! You possess all required technical skills for this role.
+                  </div>
+                `}
+              </div>
+
+              <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-secondary btn-sm" onclick="openDetailsModalSaved(${item.id})">
+                    <i class="bi bi-info-circle me-1"></i> View Details
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm" onclick="removeSaved(${item.id}, '${item.title}')">
+                    <i class="bi bi-trash3 me-1"></i> Remove
+                  </button>
+                </div>
+                ${(item.hasApplied && (item.applicationStatus === 'Applied' || item.applicationStatus === 'Application Started'))
+                  ? `<button class="btn btn-success btn-sm" onclick="showAppliedSuccessModalSaved(${item.id})">
+                       <i class="bi bi-check-circle-fill me-1"></i> Applied
+                     </button>`
+                  : `<button class="btn btn-brand btn-sm" onclick="applyFromSaved(${item.id})">
+                       <i class="bi bi-send me-1"></i> Apply Now
+                     </button>`
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function removeSaved(id, title) {
+      if (!confirm(`Remove "${title}" from your saved internships?`)) return;
+
+      try {
+        const res = await Auth.authFetch(`/api/internships/${id}/save`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          Auth.showToast(data.message, 'info');
+          loadSavedInternships();
+        } else {
+          Auth.showToast(data.message || 'Error removing saved item.', 'error');
+        }
+      } catch (err) {
+        Auth.showToast('Network error.', 'error');
+      }
+    }
+
+    async function applyFromSaved(id) {
+      try {
+        await Auth.authFetch(`/api/internships/${id}/apply`, { method: 'POST' });
+        const res = await Auth.authFetch(`/api/internships/${id}/portal-submit`, {
+          method: 'POST',
+          body: JSON.stringify({ notes: 'Applied directly from saved bookmarks' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          const item = savedList.find((x) => x.id === id);
+          if (item) {
+            item.hasApplied = true;
+            item.applicationStatus = 'Applied';
+          }
+          Auth.showToast(`Applied Successfully! 🎉 Your application for "${item?.title || 'this role'}" has been submitted.`, 'success');
+          showAppliedSuccessModalSaved(id);
+          renderSavedList(savedList);
+        } else {
+          Auth.showToast(data.message || 'Apply error.', 'error');
+        }
+      } catch (err) {
+        Auth.showToast('Network error while submitting application.', 'error');
+      }
+    }
+
+    function showAppliedSuccessModalSaved(id) {
+      const item = savedList.find((x) => x.id === id);
+      if (!item) return;
+
+      const roleEl = document.getElementById('success-modal-role');
+      const compEl = document.getElementById('success-modal-company');
+      const compNameEl = document.getElementById('success-modal-comp-name');
+      const dateEl = document.getElementById('success-modal-date');
+      const portalBtn = document.getElementById('success-modal-portal-btn');
+
+      if (roleEl) roleEl.textContent = item.title;
+      if (compEl) compEl.textContent = item.company;
+      if (compNameEl) compNameEl.textContent = item.company;
+      if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }) + ' (Just Now)';
+      }
+      if (portalBtn) {
+        portalBtn.href = `/demo-application-portal.html?id=${item.id}`;
+      }
+
+      const detailsModalEl = document.getElementById('internshipDetailsModal');
+      if (detailsModalEl) {
+        const detailsModal = bootstrap.Modal.getInstance(detailsModalEl);
+        if (detailsModal) detailsModal.hide();
+      }
+
+      const successModalEl = document.getElementById('appliedSuccessModal');
+      if (successModalEl) {
+        const successModal = new bootstrap.Modal(successModalEl);
+        successModal.show();
+      }
+    }
+
+    function openDetailsModalSaved(id) {
+      const item = savedList.find((x) => x.id === id);
+      if (!item) return;
+
+      const comp = item.company_details || {};
+      const fullAddress = [comp.address, comp.city, comp.state, comp.country].filter(Boolean).join(', ') || item.location;
+
+      document.getElementById('modal-title').textContent = item.title;
+      document.getElementById('modal-company-name').textContent = comp.name || item.company;
+      document.getElementById('modal-company-desc').textContent = comp.description || 'Enterprise technology organization.';
+      document.getElementById('modal-company-address').textContent = fullAddress;
+      document.getElementById('modal-contact-email').textContent = comp.contact_email || 'contact@example.com';
+      document.getElementById('modal-recruitment-email').textContent = comp.recruitment_email || comp.contact_email || 'careers@example.com';
+      document.getElementById('modal-mode').textContent = item.work_mode;
+      document.getElementById('modal-stipend').textContent = item.stipend || 'Competitive';
+      document.getElementById('modal-duration').textContent = item.duration;
+      document.getElementById('modal-deadline').textContent = item.deadline || 'Ongoing';
+      document.getElementById('modal-eligibility').textContent = item.eligibility;
+      document.getElementById('modal-description').textContent = item.description;
+
+      document.getElementById('modal-required-skills').innerHTML = (item.required_skills || []).map((s) => `<span class="skill-tag">${s}</span>`).join('');
+
+      document.getElementById('modal-btn-website').onclick = () => {
+        let url = comp.website || item.official_url;
+        if (!url || url.includes('example.')) {
+          url = `/demo-company.html?id=${comp.id || item.company_id || item.id}`;
+        }
+        window.open(url, '_blank');
+      };
+
+      document.getElementById('modal-btn-maps').onclick = () => {
+        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`, '_blank');
+      };
+
+      document.getElementById('modal-btn-email').onclick = () => {
+        const email = comp.recruitment_email || comp.contact_email || '';
+        const user = Auth.getUser();
+        const studentName = user?.name || 'Applicant';
+        const sub = encodeURIComponent(`Internship Application Inquiry — ${item.title}`);
+        const body = encodeURIComponent(`Dear Recruitment Team,\n\nI am interested in the ${item.title} internship opportunity at ${item.company}.\n\nBest regards,\n${studentName}`);
+        window.location.href = `mailto:${email}?subject=${sub}&body=${body}`;
+      };
+
+      const applyBtn = document.getElementById('modal-btn-apply');
+      if (applyBtn) {
+        if (item.hasApplied && (item.applicationStatus === 'Applied' || item.applicationStatus === 'Application Started')) {
+          applyBtn.className = 'btn btn-success btn-sm';
+          applyBtn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Applied';
+          applyBtn.onclick = () => {
+            showAppliedSuccessModalSaved(item.id);
+          };
+        } else {
+          applyBtn.className = 'btn btn-brand btn-sm';
+          applyBtn.innerHTML = '<i class="bi bi-send me-1"></i> Apply Now';
+          applyBtn.onclick = () => {
+            applyFromSaved(item.id);
+          };
+        }
+      }
+
+      new bootstrap.Modal(document.getElementById('internshipDetailsModal')).show();
+    }
+  </script>
+</body>
+</html>
