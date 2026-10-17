@@ -24,56 +24,25 @@
   <main class="py-5" style="background-color: #f8fafc;">
     <div class="container py-3">
 
-      <!-- Navigation Mode Tabs: Find Internships (All) vs Recommended Companies (Tailored) -->
-      <div class="card card-custom p-2 mb-4 bg-white border shadow-sm">
-        <div class="row g-2 align-items-center">
-          <div class="col-md-6">
-            <button id="tab-find-all" type="button" class="btn w-100 py-3 px-3 rounded-3 text-start d-flex align-items-center justify-content-between btn-primary text-white shadow-sm transition-all">
-              <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-25" style="width: 44px; height: 44px; font-size: 1.25rem;">
-                  <i class="bi bi-briefcase-fill"></i>
-                </div>
-                <div>
-                  <div class="fw-bold fs-6" id="label-tab-find">Find Internships</div>
-                  <small class="opacity-75 d-block">Browse all opportunities across all domains</small>
-                </div>
-              </div>
-              <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold" id="badge-all-count">All Listings</span>
-            </button>
-          </div>
-          <div class="col-md-6">
-            <button id="tab-recommended" type="button" class="btn w-100 py-3 px-3 rounded-3 text-start d-flex align-items-center justify-content-between btn-light border text-dark transition-all">
-              <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-25 text-warning" style="width: 44px; height: 44px; font-size: 1.25rem;">
-                  <i class="bi bi-stars"></i>
-                </div>
-                <div>
-                  <div class="fw-bold fs-6 text-dark" id="label-tab-rec">Recommended Companies</div>
-                  <small class="text-muted d-block">Strictly tailored to your verified skills</small>
-                </div>
-              </div>
-              <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fw-bold" id="badge-rec-count">Tailored Match</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       <!-- Breadcrumbs & Heading -->
       <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
         <div>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb small">
               <li class="breadcrumb-item"><a href="index.html" class="text-decoration-none">Home</a></li>
-              <li class="breadcrumb-item active" id="breadcrumb-active" aria-current="page">Find Internships (All Domains)</li>
+              <li class="breadcrumb-item"><a href="dashboard.html" class="text-decoration-none">Dashboard</a></li>
+              <li class="breadcrumb-item active" id="breadcrumb-active" aria-current="page">Recommended Companies</li>
             </ol>
           </nav>
-          <h2 class="fw-bold text-dark mb-1" id="section-title">Find Internships — All Available Opportunities</h2>
+          <h2 class="fw-bold text-dark mb-1" id="section-title">
+            <i class="bi bi-stars text-primary me-2"></i> Recommended Companies Tailored to Verified Skills
+          </h2>
           <p class="text-secondary mb-0" id="section-subtitle">
-            Explore all available internship opportunities across all technical domains without skill restrictions. Discover any role freely.
+            Opportunities strictly tailored to your verified profile skills. Compare your extracted skill match percentage, view individual matching skill alignments, and check any missing skills required for 100% compatibility.
           </p>
         </div>
         <div id="results-count-label" class="badge bg-white text-secondary border px-3 py-2 rounded-pill mt-2 mt-md-0 fw-semibold">
-          Loading opportunities...
+          Loading recommendations...
         </div>
       </div>
 
@@ -89,9 +58,6 @@
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-warning btn-sm fw-bold px-3" id="btn-reupload-banner" onclick="openInlineResumeUpload()">
             <i class="bi bi-arrow-repeat me-1"></i> Update Resume
-          </button>
-          <button type="button" class="btn btn-outline-primary btn-sm fw-bold px-3" id="btn-switch-all-banner">
-            <i class="bi bi-grid me-1"></i> Browse All Openings
           </button>
         </div>
       </div>
@@ -147,8 +113,8 @@
             </select>
           </div>
 
-          <!-- Skill Alignment threshold -->
-          <div class="col-lg-2 col-md-4">
+          <!-- Skill Alignment threshold (visible in Recommended Companies mode) -->
+          <div class="col-lg-2 col-md-4" id="container-filter-min-match">
             <label for="filter-min-match" class="form-label small fw-bold text-secondary">Skill Alignment</label>
             <select id="filter-min-match" class="form-select">
               <option value="">All Alignments</option>

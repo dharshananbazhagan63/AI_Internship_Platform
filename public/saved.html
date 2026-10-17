@@ -255,11 +255,11 @@
           <div class="col-12">
             <div class="card card-custom p-5 text-center bg-white">
               <div class="text-muted fs-1 mb-2"><i class="bi bi-bookmark-dash"></i></div>
-              <h5 class="fw-bold text-dark">No saved internships yet</h5>
-              <p class="text-secondary small mb-3">Explore matching internships and bookmark roles to review them anytime.</p>
+              <h5 class="fw-bold text-dark">No saved opportunities yet</h5>
+              <p class="text-secondary small mb-3">Explore recommended companies and bookmark opportunities to review them anytime.</p>
               <div>
                 <a href="internships.html" class="btn btn-brand btn-sm px-4">
-                  <i class="bi bi-compass me-1"></i> Browse Opportunities
+                  <i class="bi bi-stars me-1"></i> View Recommended Companies
                 </a>
               </div>
             </div>
@@ -269,20 +269,33 @@
       }
 
       container.innerHTML = items.map((item) => {
+        const reqList = item.required_skills || [];
+        const totalReq = reqList.length > 0 ? reqList.length : ((item.matchingSkills?.length || 0) + (item.missingSkills?.length || 0) || 1);
+        const matchingSkills = item.matchingSkills || [];
+        const missingSkills = item.missingSkills || [];
+        const matchCount = matchingSkills.length;
+        const matchPct = (item.matchScore !== null && item.matchScore !== undefined)
+          ? Math.round(Number(item.matchScore))
+          : Math.round((matchCount / totalReq) * 100);
+
+        const indAlignmentPct = totalReq > 0 ? (100 / totalReq).toFixed(1).replace('.0', '') : '0';
+        const progressBg = matchPct >= 70 ? 'bg-success' : (matchPct >= 40 ? 'bg-primary' : 'bg-warning');
+        const badgeBg = matchPct >= 70 ? 'bg-success text-white' : (matchPct >= 40 ? 'bg-primary text-white' : 'bg-warning text-dark');
+
         let matchBadgeHtml = '';
         if (item.matchScore !== null && item.matchScore !== undefined) {
-          if (item.missingSkills && item.missingSkills.length === 0) {
-            matchBadgeHtml = `<span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2 py-1 rounded-pill small fw-semibold"><i class="bi bi-patch-check-fill me-1"></i> 100% Match</span>`;
-          } else {
-            matchBadgeHtml = `<span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill small fw-semibold"><i class="bi bi-stars me-1"></i> Skill Matched</span>`;
-          }
+          matchBadgeHtml = `
+            <span class="badge ${badgeBg} px-2 py-1 rounded-pill small fw-bold">
+              <i class="bi bi-pie-chart-fill me-1"></i> ${matchPct}% Match
+            </span>
+          `;
         }
 
         const savedDate = item.saved_at ? new Date(item.saved_at).toLocaleDateString() : 'Recently';
 
         return `
           <div class="col-lg-6 mb-4">
-            <div class="card card-custom h-100 p-4 bg-white d-flex flex-column justify-content-between">
+            <div class="card card-custom h-100 p-4 bg-white d-flex flex-column justify-content-between border border-primary border-opacity-25 shadow-sm">
               <div>
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill fw-semibold">
@@ -293,7 +306,7 @@
 
                 <h5 class="fw-bold mb-1 text-dark">${item.title}</h5>
                 <div class="text-muted small fw-semibold mb-3">
-                  <i class="bi bi-building text-primary me-1"></i> ${item.company} &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+                  <i class="bi bi-building text-primary me-1"></i> <strong class="text-dark">${item.company}</strong> &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 mb-3">
@@ -304,24 +317,63 @@
 
                 <p class="small text-secondary mb-3">${item.description}</p>
 
-                <div class="mb-3">
-                  <small class="text-muted d-block mb-1 fw-bold">Required Skills:</small>
-                  <div class="d-flex flex-wrap gap-1">
-                    ${(item.required_skills || []).map((s) => `<span class="skill-tag">${s}</span>`).join('')}
+                <!-- Skill Match Percentage & Simple Progress Bar -->
+                <div class="p-3 rounded bg-light border mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small fw-bold text-dark d-flex align-items-center"><i class="bi bi-speedometer2 text-primary me-2"></i> Skill Match Percentage:</span>
+                    <span class="fw-bold small ${matchPct >= 70 ? 'text-success' : (matchPct >= 40 ? 'text-primary' : 'text-warning')}">${matchPct}%</span>
+                  </div>
+                  <div class="progress" style="height: 10px; border-radius: 5px; background-color: #e2e8f0;">
+                    <div class="progress-bar ${progressBg} progress-bar-striped" role="progressbar" style="width: ${matchPct}%;"></div>
+                  </div>
+                  <div class="d-flex justify-content-between small text-muted mt-2" style="font-size: 0.76rem;">
+                    <span>${matchCount} of ${totalReq} required skills matched</span>
+                    <span>(${matchCount} / ${totalReq}) &times; 100 = <strong>${matchPct}%</strong></span>
                   </div>
                 </div>
 
-                ${item.missingSkills && item.missingSkills.length > 0 ? `
-                  <div class="small mb-3 p-2 rounded bg-light border border-warning border-opacity-25">
-                    <div class="fw-semibold text-dark mb-1 small">
-                      <i class="bi bi-lightbulb-fill text-warning me-1"></i> Additional Skills Required for 100% Match:
-                    </div>
+                <!-- Matching Skills with Individual Alignment Percentages -->
+                <div class="mb-3 p-3 rounded bg-white border border-success border-opacity-50">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="fw-bold text-success d-flex align-items-center">
+                      <i class="bi bi-check-circle-fill me-1"></i> Matching Skills from Profile (${matchCount}):
+                    </small>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 small">
+                      ${indAlignmentPct}% alignment each
+                    </span>
+                  </div>
+                  ${matchingSkills.length > 0 ? `
                     <div class="d-flex flex-wrap gap-1">
-                      ${item.missingSkills.map((s) => `<span class="badge bg-warning bg-opacity-25 text-dark border border-warning border-opacity-50 small">${s}</span>`).join('')}
+                      ${matchingSkills.map((s) => `
+                        <span class="skill-tag skill-tag-matched">
+                          <i class="bi bi-check2 text-success me-1"></i>${s}
+                          <span class="badge bg-success text-white ms-1 rounded-pill small">+${indAlignmentPct}%</span>
+                        </span>
+                      `).join('')}
+                    </div>
+                  ` : `
+                    <small class="text-muted fst-italic">No matching skills detected from profile.</small>
+                  `}
+                </div>
+
+                <!-- Required Skills Missing from Profile -->
+                ${missingSkills.length > 0 ? `
+                  <div class="small mb-3 p-3 rounded bg-light border border-danger border-opacity-25">
+                    <div class="fw-semibold text-danger mb-1 small d-flex justify-content-between align-items-center">
+                      <span><i class="bi bi-exclamation-triangle-fill text-danger me-1"></i> Required Skills Missing from Profile (${missingSkills.length}):</span>
+                      <span class="badge bg-danger text-white rounded-pill">${missingSkills.length} Missing</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-1 mt-1">
+                      ${missingSkills.map((s) => `
+                        <span class="skill-tag skill-tag-missing">
+                          <i class="bi bi-x-circle text-danger me-1"></i>${s}
+                          <span class="badge bg-danger text-white ms-1 rounded-pill small">Missing (-${indAlignmentPct}%)</span>
+                        </span>
+                      `).join('')}
                     </div>
                   </div>
                 ` : `
-                  <div class="small mb-3 p-2 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
+                  <div class="small mb-3 p-3 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
                     <i class="bi bi-check-circle-fill me-1"></i> 100% Skill Match! You possess all required technical skills for this role.
                   </div>
                 `}

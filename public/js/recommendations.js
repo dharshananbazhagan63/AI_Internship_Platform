@@ -6,12 +6,12 @@
 let allInternshipsData = [];
 let filteredInternships = [];
 let userSkillsList = [];
-let currentMode = 'all'; // 'all' (Find Internships) or 'recommended' (Recommended Companies)
+let currentMode = 'recommended'; // Exclusively 'recommended' (Recommended Companies)
 let currentFilterCategory = 'All';
 let currentFilterWorkMode = 'All';
 let currentFilterSearch = '';
 let currentFilterMinMatch = '';
-let currentSortOption = 'newest'; // default 'newest' for all, 'match_desc' for recommended
+let currentSortOption = 'match_desc'; // default 'match_desc' for recommended companies
 let selectedInternship = null;
 
 // Pagination state (Feature 1: 10-20 per page, Load More for hundreds/thousands)
@@ -27,79 +27,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (catSelect) catSelect.value = currentFilterCategory;
   }
 
-  if (params.get('filter') === 'recommended' || params.get('view') === 'recommended') {
-    currentMode = 'recommended';
-    currentSortOption = 'match_desc';
-  } else {
-    currentMode = 'all';
-    currentSortOption = 'newest';
-  }
+  currentMode = 'recommended';
+  currentSortOption = 'match_desc';
 
   const sortSelect = document.getElementById('sort-options');
   if (sortSelect) sortSelect.value = currentSortOption;
 
-  Auth.renderNavbar(currentMode === 'recommended' ? 'recommendations' : 'internships');
+  Auth.renderNavbar('recommendations');
   Auth.renderFooter();
 
-  setupModeTabs();
   setupFilterListeners();
   loadInternships();
 });
 
-function setupModeTabs() {
-  const tabFindAll = document.getElementById('tab-find-all');
-  const tabRecommended = document.getElementById('tab-recommended');
-  const btnSwitchAllBanner = document.getElementById('btn-switch-all-banner');
-
-  if (tabFindAll) {
-    tabFindAll.addEventListener('click', () => switchMode('all'));
-  }
-  if (tabRecommended) {
-    tabRecommended.addEventListener('click', () => switchMode('recommended'));
-  }
-  if (btnSwitchAllBanner) {
-    btnSwitchAllBanner.addEventListener('click', () => switchMode('all'));
-  }
-}
-
 function switchMode(newMode) {
-  if (currentMode === newMode) return;
-  currentMode = newMode;
-
-  // Update browser URL without reloading page
-  const newUrl = currentMode === 'recommended' ? 'internships.html?filter=recommended' : 'internships.html';
-  window.history.pushState({ mode: currentMode }, '', newUrl);
-
-  // Set default sorting per mode
-  if (currentMode === 'recommended') {
-    currentSortOption = 'match_desc';
-  } else {
-    currentSortOption = 'newest';
-  }
-  const sortSelect = document.getElementById('sort-options');
-  if (sortSelect) sortSelect.value = currentSortOption;
-
+  currentMode = 'recommended';
+  currentSortOption = 'match_desc';
   updateUIForCurrentMode();
   applyFiltersAndResetPagination();
 }
 window.switchMode = switchMode;
 
-window.addEventListener('popstate', () => {
-  const params = new URLSearchParams(window.location.search);
-  const mode = (params.get('filter') === 'recommended' || params.get('view') === 'recommended') ? 'recommended' : 'all';
-  if (mode !== currentMode) {
-    currentMode = mode;
-    currentSortOption = currentMode === 'recommended' ? 'match_desc' : 'newest';
-    const sortSelect = document.getElementById('sort-options');
-    if (sortSelect) sortSelect.value = currentSortOption;
-    updateUIForCurrentMode();
-    applyFiltersAndResetPagination();
-  }
-});
-
 function updateUIForCurrentMode() {
-  const tabFindAll = document.getElementById('tab-find-all');
-  const tabRecommended = document.getElementById('tab-recommended');
   const breadcrumbActive = document.getElementById('breadcrumb-active');
   const sectionTitle = document.getElementById('section-title');
   const sectionSubtitle = document.getElementById('section-subtitle');
@@ -108,80 +57,41 @@ function updateUIForCurrentMode() {
   const skillsSpan = document.getElementById('active-user-skills-list');
 
   // Update navbar active state
-  Auth.renderNavbar(currentMode === 'recommended' ? 'recommendations' : 'internships');
+  Auth.renderNavbar('recommendations');
 
-  if (currentMode === 'all') {
-    // Tab styles
-    if (tabFindAll) {
-      tabFindAll.className = 'btn w-100 py-3 px-3 rounded-3 text-start d-flex align-items-center justify-content-between btn-primary text-white shadow-sm transition-all';
-      const iconBox = tabFindAll.querySelector('.rounded-circle');
-      if (iconBox) iconBox.className = 'rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-25 text-white';
-    }
-    if (tabRecommended) {
-      tabRecommended.className = 'btn w-100 py-3 px-3 rounded-3 text-start d-flex align-items-center justify-content-between btn-light border text-dark transition-all';
-      const iconBox = tabRecommended.querySelector('.rounded-circle');
-      if (iconBox) iconBox.className = 'rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-25 text-warning';
-    }
+  // Header & breadcrumbs
+  if (breadcrumbActive) breadcrumbActive.textContent = 'Recommended Companies';
+  if (sectionTitle) sectionTitle.innerHTML = '<i class="bi bi-stars text-primary me-2"></i> Recommended Companies Tailored to Verified Skills';
+  if (sectionSubtitle) {
+    sectionSubtitle.textContent = 'Opportunities strictly tailored to your verified profile skills. Compare your extracted skill match percentage, view individual matching skill alignments, and check any missing skills required for 100% compatibility.';
+  }
 
-    // Header & breadcrumbs
-    if (breadcrumbActive) breadcrumbActive.textContent = 'Find Internships (All Domains)';
-    if (sectionTitle) sectionTitle.textContent = 'Find Internships — All Available Opportunities';
-    if (sectionSubtitle) {
-      sectionSubtitle.textContent = `Explore all ${allInternshipsData.length || 40} available internship opportunities across all technical domains without skill restrictions. Discover any role freely.`;
-    }
+  // Show Skill Alignment filter in Recommended mode
+  const minMatchContainer = document.getElementById('container-filter-min-match');
+  if (minMatchContainer) minMatchContainer.classList.remove('d-none');
 
-    // Banners
-    if (recommendedBanner) recommendedBanner.classList.add('d-none');
-    if (resumeBanner) {
-      if (Auth.isLoggedIn() && userSkillsList.length === 0) {
-        resumeBanner.classList.remove('d-none');
-      } else {
-        resumeBanner.classList.add('d-none');
+  // Default sort for recommended
+  const sortSelect = document.getElementById('sort-options');
+  if (sortSelect) {
+    sortSelect.value = currentSortOption;
+  }
+
+  // Banners
+  if (resumeBanner) resumeBanner.classList.add('d-none');
+  if (recommendedBanner) {
+    if (userSkillsList.length > 0) {
+      recommendedBanner.classList.remove('d-none');
+      if (skillsSpan) {
+        skillsSpan.textContent = userSkillsList.slice(0, 8).join(', ') + (userSkillsList.length > 8 ? ` +${userSkillsList.length - 8} more` : '');
       }
-    }
-  } else {
-    // Mode: RECOMMENDED
-    if (tabFindAll) {
-      tabFindAll.className = 'btn w-100 py-3 px-3 rounded-3 text-start d-flex align-items-center justify-content-between btn-light border text-dark transition-all';
-      const iconBox = tabFindAll.querySelector('.rounded-circle');
-      if (iconBox) iconBox.className = 'rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary';
-    }
-    if (tabRecommended) {
-      tabRecommended.className = 'btn w-100 py-3 px-3 rounded-3 text-start d-flex align-items-center justify-content-between btn-warning text-dark shadow-sm transition-all';
-      const iconBox = tabRecommended.querySelector('.rounded-circle');
-      if (iconBox) iconBox.className = 'rounded-circle d-flex align-items-center justify-content-center bg-white text-dark';
-    }
-
-    // Header & breadcrumbs
-    if (breadcrumbActive) breadcrumbActive.textContent = 'Recommended Companies (Tailored Matches)';
-    if (sectionTitle) sectionTitle.textContent = 'Recommended Companies & Tailored Opportunities';
-    if (sectionSubtitle) {
-      sectionSubtitle.textContent = 'Strictly showing companies and positions matching your verified skill set and compatibility percentage.';
-    }
-
-    // Banners
-    if (resumeBanner) resumeBanner.classList.add('d-none');
-    if (recommendedBanner) {
-      if (userSkillsList.length > 0) {
-        recommendedBanner.classList.remove('d-none');
-        if (skillsSpan) {
-          skillsSpan.textContent = userSkillsList.slice(0, 8).join(', ') + (userSkillsList.length > 8 ? ` +${userSkillsList.length - 8} more` : '');
-        }
-      } else {
-        recommendedBanner.classList.add('d-none');
-      }
+    } else {
+      recommendedBanner.classList.add('d-none');
     }
   }
 }
 
 function updateBadgeCounts() {
-  const badgeAll = document.getElementById('badge-all-count');
   const badgeRec = document.getElementById('badge-rec-count');
-
-  if (badgeAll) {
-    badgeAll.textContent = `${allInternshipsData.length} Total`;
-  }
-
   if (badgeRec) {
     if (userSkillsList.length > 0) {
       const tailoredCount = allInternshipsData.filter((i) => (i.matchScore || 0) > 0 && i.matchingSkills && i.matchingSkills.length > 0).length;
@@ -298,25 +208,13 @@ async function loadInternships() {
 function applyFiltersAndResetPagination() {
   currentlyVisibleCount = PAGE_SIZE;
 
-  // 1. Determine base pool according to current mode
-  let baseList = [];
-
-  if (currentMode === 'recommended') {
-    // RECOMMENDED COMPANIES MODE:
-    // Strictly show only opportunities tailored to user skills.
-    if (!Auth.isLoggedIn() || userSkillsList.length === 0) {
-      // User has not logged in or uploaded a resume yet
-      filteredInternships = [];
-      renderRecommendedEmptyState();
-      return;
-    }
-    // Filter strictly to matching skills
-    baseList = allInternshipsData.filter((item) => (item.matchScore || 0) > 0 && item.matchingSkills && item.matchingSkills.length > 0);
-  } else {
-    // FIND INTERNSHIPS MODE:
-    // List ALL available opportunities across all domains freely
-    baseList = [...allInternshipsData];
+  // 1. Recommended Companies: Strictly filter to tailored matching opportunities
+  if (!Auth.isLoggedIn() || userSkillsList.length === 0) {
+    filteredInternships = [];
+    renderRecommendedEmptyState();
+    return;
   }
+  let baseList = allInternshipsData.filter((item) => (item.matchScore || 0) > 0 && item.matchingSkills && item.matchingSkills.length > 0);
 
   // 2. Apply search filter
   if (currentFilterSearch) {
@@ -407,18 +305,12 @@ function renderRecommendedEmptyState() {
             <button type="button" class="btn btn-brand px-4 py-2" id="btn-inline-upload-submit">
               <i class="bi bi-stars me-1"></i> Upload & Reveal Recommendations
             </button>
-            <button class="btn btn-outline-secondary px-4 py-2" onclick="switchMode('all')">
-              <i class="bi bi-briefcase me-1"></i> Browse All Openings
-            </button>
           </div>
         ` : `
           <div class="d-flex flex-wrap justify-content-center gap-3">
             <a href="login.html" class="btn btn-brand px-4 py-2">
               <i class="bi bi-box-arrow-in-right me-2"></i> Log In to Your Account
             </a>
-            <button class="btn btn-outline-secondary px-4 py-2" onclick="switchMode('all')">
-              <i class="bi bi-briefcase me-2"></i> Browse All 40+ Internships Freely
-            </button>
           </div>
         `}
       </div>
@@ -648,34 +540,18 @@ function renderCardsList() {
   }
 
   if (total === 0) {
-    if (currentMode === 'recommended') {
-      container.innerHTML = `
-        <div class="col-12 text-center py-5">
-          <div class="text-warning fs-1 mb-2"><i class="bi bi-search"></i></div>
-          <h5 class="fw-bold text-dark">No tailored recommendations match your active filters</h5>
-          <p class="text-secondary small mb-3">Try clearing search terms or explore the full catalog across all domains.</p>
-          <div class="d-flex justify-content-center gap-2">
-            <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('btn-reset-filters').click()">
-              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters
-            </button>
-            <button class="btn btn-brand btn-sm" onclick="switchMode('all')">
-              <i class="bi bi-briefcase me-1"></i> Browse All Internships
-            </button>
-          </div>
-        </div>
-      `;
-    } else {
-      container.innerHTML = `
-        <div class="col-12 text-center py-5">
-          <div class="text-muted fs-1 mb-2"><i class="bi bi-search"></i></div>
-          <h5 class="fw-bold text-dark">No internships matching current filters</h5>
-          <p class="text-secondary small mb-3">Try clearing search terms or selecting 'All' in category and work mode filters.</p>
+    container.innerHTML = `
+      <div class="col-12 text-center py-5">
+        <div class="text-warning fs-1 mb-2"><i class="bi bi-search"></i></div>
+        <h5 class="fw-bold text-dark">No tailored recommendations match your active filters</h5>
+        <p class="text-secondary small mb-3">Try clearing search terms or resetting alignment filters to see all tailored roles.</p>
+        <div class="d-flex justify-content-center gap-2">
           <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('btn-reset-filters').click()">
-            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All Filters
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters
           </button>
         </div>
-      `;
-    }
+      </div>
+    `;
     return;
   }
 
@@ -683,10 +559,10 @@ function renderCardsList() {
 }
 
 /**
- * Render single internship card:
- * Displays ONLY internship title, company, specs, description, eligibility,
- * matching skills, and additional skills required for 100% match.
- * (No match percentages like 60% or 80% displayed!)
+ * Render single recommended company card:
+ * - Extracted skill match percentage with progress bar
+ * - List of matching skills with their individual alignment percentages
+ * - List of required skills that are currently missing from the user's profile
  */
 function renderInternshipCardFull(item) {
   const companyLogo = item.company_details?.logo_url || '';
@@ -703,94 +579,60 @@ function renderInternshipCardFull(item) {
     </button>
   `;
 
-  const matchingBadges = (item.matchingSkills || []).map(
-    (s) => `<span class="skill-tag skill-tag-matched"><i class="bi bi-check-circle me-1"></i>${s}</span>`
-  ).join('');
+  // Total required skills and matching skills
+  const reqSkillsList = item.required_skills || [];
+  const totalRequiredSkills = reqSkillsList.length > 0 ? reqSkillsList.length : ((item.matchingSkills?.length || 0) + (item.missingSkills?.length || 0) || 1);
+  const matchSkillsList = item.matchingSkills || [];
+  const missingSkillsList = item.missingSkills || [];
+  const matchingCount = matchSkillsList.length;
 
-  const missingBadges = (item.missingSkills || []).map(
-    (s) => `<span class="skill-tag skill-tag-missing"><i class="bi bi-plus-circle me-1"></i>${s}</span>`
-  ).join('');
-
-  // Status Badge for card header (NO numeric percentages!)
-  let statusBadgeHtml = '';
-  if (userSkillsList && userSkillsList.length > 0 && item.matchingSkills) {
-    if (item.missingSkills && item.missingSkills.length === 0 && item.matchingSkills.length > 0) {
-      statusBadgeHtml = `<span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-3 py-1 rounded-pill small fw-semibold"><i class="bi bi-patch-check-fill me-1"></i> 100% Match Qualified</span>`;
-    } else if (item.matchingSkills.length > 0) {
-      statusBadgeHtml = `<span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill small fw-semibold"><i class="bi bi-stars me-1"></i> ${item.matchingSkills.length} Matching Skill${item.matchingSkills.length > 1 ? 's' : ''}</span>`;
-    }
+  let matchPercentage = 0;
+  if (totalRequiredSkills > 0) {
+    matchPercentage = Math.round((matchingCount / totalRequiredSkills) * 100);
+  } else if (item.matchScore !== null && item.matchScore !== undefined) {
+    matchPercentage = Math.round(Number(item.matchScore));
   }
 
-  // Skills & 100% Roadmap HTML (NO numeric percentages!)
-  let skillsRoadmapHtml = '';
-  if (userSkillsList && userSkillsList.length > 0) {
-    skillsRoadmapHtml = `
-      <div class="bg-light p-3 rounded-3 mb-3 border">
-        ${matchingBadges ? `
-          <div class="mb-2">
-            <small class="text-success fw-bold d-block mb-1">
-              <i class="bi bi-check-circle-fill me-1"></i> Your Matching Skills (${item.matchingSkills.length}):
-            </small>
-            <div class="d-flex flex-wrap gap-1">${matchingBadges}</div>
-          </div>
-        ` : ''}
+  // Individual alignment percentage per required skill (e.g. 20%, 25%, 33.3%)
+  const indAlignmentPct = totalRequiredSkills > 0 ? (100 / totalRequiredSkills).toFixed(1).replace('.0', '') : '0';
 
-        ${(item.missingSkills && item.missingSkills.length > 0) ? `
-          <div class="p-2 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 mt-2">
-            <div class="small fw-bold text-dark d-flex align-items-center justify-content-between mb-1">
-              <span><i class="bi bi-bullseye text-warning me-1"></i> Additional Skills Required for 100% Match:</span>
-              <span class="badge bg-warning text-dark rounded-pill">${item.missingSkills.length} to learn</span>
-            </div>
-            <div class="d-flex flex-wrap gap-1">${missingBadges}</div>
-            <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">
-              <i class="bi bi-lightbulb me-1"></i> Acquiring these ${item.missingSkills.length} additional skills qualifies your profile 100% for this role.
-            </small>
-          </div>
-        ` : `
-          <div class="p-2 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 mt-2">
-            <small class="text-success fw-bold d-block">
-              <i class="bi bi-patch-check-fill me-1"></i> 100% Match Achieved! You possess all required technical skills for this role.
-            </small>
-          </div>
-        `}
-      </div>
-    `;
-  } else {
-    // Guest or no resume uploaded yet
-    skillsRoadmapHtml = `
-      <div class="mb-3">
-        <small class="text-muted d-block mb-1 fw-bold">Required Skills:</small>
-        <div class="d-flex flex-wrap gap-1">
-          ${(item.required_skills || []).map((s) => `<span class="skill-tag">${s}</span>`).join('')}
-        </div>
-      </div>
-    `;
-  }
+  const matchBadgeBg = matchPercentage >= 70 ? 'bg-success text-white' : (matchPercentage >= 40 ? 'bg-primary text-white' : 'bg-warning text-dark');
+  const matchProgressBg = matchPercentage >= 70 ? 'bg-success' : (matchPercentage >= 40 ? 'bg-primary' : 'bg-warning');
+
+  const matchingBadges = matchSkillsList.map(
+    (s) => `<span class="skill-tag skill-tag-matched"><i class="bi bi-check2 text-success me-1"></i>${s} <span class="badge bg-success text-white ms-1 rounded-pill small">+${indAlignmentPct}%</span></span>`
+  ).join('');
+
+  const missingBadges = missingSkillsList.map(
+    (s) => `<span class="skill-tag skill-tag-missing"><i class="bi bi-x-circle text-danger me-1"></i>${s} <span class="badge bg-danger text-white ms-1 rounded-pill small">Missing (-${indAlignmentPct}%)</span></span>`
+  ).join('');
 
   return `
     <div class="col-lg-6 col-12 mb-4">
-      <div class="card card-custom h-100 p-4 d-flex flex-column justify-content-between">
+      <div class="card card-custom h-100 p-4 d-flex flex-column justify-content-between border-primary border-opacity-25 shadow-sm">
         <div>
-          <!-- Header: Category & Verified Badge (NO numeric percentages) -->
+          <!-- Header: Category & Match Percentage Badge -->
           <div class="d-flex justify-content-between align-items-start mb-2">
             <div>
               <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill fw-semibold me-1">
                 ${item.category}
               </span>
-              <span class="badge bg-secondary bg-opacity-10 text-dark px-2 py-1 rounded-pill small">
-                Demo Listing
+              <span class="badge bg-warning bg-opacity-10 text-dark px-2 py-1 rounded-pill small fw-semibold">
+                Tailored Match
               </span>
             </div>
-            ${statusBadgeHtml}
+            <span class="badge ${matchBadgeBg} px-3 py-1 rounded-pill small fw-bold shadow-sm">
+              <i class="bi bi-pie-chart-fill me-1"></i> ${matchPercentage}% Match
+            </span>
           </div>
 
-          <!-- Company Info and Title -->
+          <!-- Company Name & Internship Title -->
           <div class="d-flex align-items-center mt-3 mb-2">
             ${logoHtml}
             <div>
               <h5 class="fw-bold mb-0 text-dark">${item.title}</h5>
-              <div class="text-muted fw-semibold small">
-                <i class="bi bi-building me-1 text-primary"></i> ${item.company} &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+              <div class="text-muted fw-semibold small mt-1">
+                <i class="bi bi-building me-1 text-primary"></i> <strong class="text-dark fs-6">${item.company}</strong> &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
               </div>
             </div>
           </div>
@@ -813,8 +655,69 @@ function renderInternshipCardFull(item) {
             <strong>Eligibility:</strong> ${item.eligibility}
           </p>
 
-          <!-- Skills & 100% Roadmap -->
-          ${skillsRoadmapHtml}
+          <!-- 1. Extracted Skill Match Percentage & Simple Progress Bar -->
+          <div class="card p-3 bg-light border mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small fw-bold text-dark d-flex align-items-center">
+                <i class="bi bi-speedometer2 text-primary me-2 fs-6"></i> Extracted Skill Match Percentage:
+              </span>
+              <span class="badge ${matchBadgeBg} px-2 py-1 fw-bold fs-6">
+                ${matchPercentage}%
+              </span>
+            </div>
+            <div class="progress" style="height: 10px; border-radius: 5px; background-color: #e2e8f0;">
+              <div class="progress-bar ${matchProgressBg} progress-bar-striped" 
+                   role="progressbar" 
+                   style="width: ${matchPercentage}%;" 
+                   aria-valuenow="${matchPercentage}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100">
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center small text-muted mt-2" style="font-size: 0.76rem;">
+              <span><i class="bi bi-check2-circle text-success me-1"></i> ${matchingCount} of ${totalRequiredSkills} required skills matched</span>
+              <span>Formula: (${matchingCount} / ${totalRequiredSkills}) &times; 100 = <strong>${matchPercentage}%</strong></span>
+            </div>
+          </div>
+
+          <!-- 2. Matching Skills with Individual Alignment Percentages -->
+          <div class="mb-3 p-3 rounded bg-white border border-success border-opacity-50">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <small class="fw-bold text-success d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-1"></i> Matching Skills from Profile (${matchingCount}):
+              </small>
+              <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 small">
+                ${indAlignmentPct}% alignment each
+              </span>
+            </div>
+            ${matchingBadges ? `
+              <div class="d-flex flex-wrap gap-1">${matchingBadges}</div>
+            ` : `
+              <small class="text-muted fst-italic">No matching skills detected from profile.</small>
+            `}
+          </div>
+
+          <!-- 3. Required Skills Currently Missing from User's Profile -->
+          ${missingSkillsList.length > 0 ? `
+            <div class="mb-3 p-3 rounded bg-light border border-danger border-opacity-25">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="fw-bold text-danger d-flex align-items-center">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Required Skills Missing From Profile (${missingSkillsList.length}):
+                </small>
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 small">
+                  ${missingSkillsList.length} Missing
+                </span>
+              </div>
+              <div class="d-flex flex-wrap gap-1">${missingBadges}</div>
+              <small class="text-muted d-block mt-2" style="font-size: 0.74rem;">
+                <i class="bi bi-info-circle text-primary me-1"></i> Adding these ${missingSkillsList.length} skill${missingSkillsList.length === 1 ? '' : 's'} will achieve a 100% match for ${item.company}.
+              </small>
+            </div>
+          ` : `
+            <div class="small mb-3 p-3 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
+              <i class="bi bi-patch-check-fill me-1"></i> 100% Verified Match! No missing skills &mdash; your verified skills fully cover this opportunity.
+            </div>
+          `}
         </div>
 
         <!-- Action Buttons: View Details, Save, Apply Now -->
@@ -878,39 +781,86 @@ function openDetailsModal(id) {
     reqSkillsList.innerHTML = (item.required_skills || []).map((s) => `<span class="skill-tag me-1 mb-1">${s}</span>`).join('');
   }
 
-  // Skills Roadmap for 100% Match in Modal (NO numeric percentages!)
+  // Skills Roadmap & Match Percentage in Modal (Strictly for Recommended Companies mode)
   const roadmapContainer = document.getElementById('modal-skills-roadmap-container');
   if (roadmapContainer) {
     if (userSkillsList && userSkillsList.length > 0) {
-      const matchBadges = (item.matchingSkills || []).map((s) => `<span class="skill-tag skill-tag-matched"><i class="bi bi-check-circle me-1"></i>${s}</span>`).join('');
-      const missingBadges = (item.missingSkills || []).map((s) => `<span class="skill-tag skill-tag-missing"><i class="bi bi-plus-circle me-1"></i>${s}</span>`).join('');
+      const modalReqSkills = item.required_skills || [];
+      const modalTotalReq = modalReqSkills.length > 0 ? modalReqSkills.length : 1;
+      const modalMatching = (item.matchingSkills || []).length;
+      let modalMatchPct = modalReqSkills.length > 0 ? Math.round((modalMatching / modalTotalReq) * 100) : (item.matchScore || 0);
+      const indAlignmentPct = modalTotalReq > 0 ? (100 / modalTotalReq).toFixed(1).replace('.0', '') : '0';
+      const modalProgressBg = modalMatchPct >= 70 ? 'bg-success' : (modalMatchPct >= 40 ? 'bg-primary' : 'bg-warning');
+      const modalBadgeBg = modalMatchPct >= 70 ? 'bg-success text-white' : (modalMatchPct >= 40 ? 'bg-primary text-white' : 'bg-warning text-dark');
+
+      const matchBadges = (item.matchingSkills || []).map((s) => `
+        <span class="skill-tag skill-tag-matched">
+          <i class="bi bi-check2 text-success me-1"></i>${s}
+          <span class="badge bg-success text-white ms-1 rounded-pill small">+${indAlignmentPct}%</span>
+        </span>
+      `).join('');
+      const missingBadges = (item.missingSkills || []).map((s) => `
+        <span class="skill-tag skill-tag-missing">
+          <i class="bi bi-x-circle text-danger me-1"></i>${s}
+          <span class="badge bg-danger text-white ms-1 rounded-pill small">Missing (-${indAlignmentPct}%)</span>
+        </span>
+      `).join('');
 
       roadmapContainer.innerHTML = `
         <div class="card p-3 bg-light border mb-3">
-          <h6 class="fw-bold text-dark mb-2">
-            <i class="bi bi-bullseye text-primary me-2"></i> Skill Alignment & 100% Match Roadmap
-          </h6>
-          ${matchBadges ? `
-            <div class="mb-2">
-              <small class="text-success fw-bold d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i> Your Matching Skills (${(item.matchingSkills || []).length}):</small>
-              <div class="d-flex flex-wrap gap-1">${matchBadges}</div>
-            </div>
-          ` : ''}
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="small fw-bold text-dark d-flex align-items-center">
+              <i class="bi bi-speedometer2 text-primary me-2 fs-6"></i> Extracted Skill Match Percentage:
+            </span>
+            <span class="badge ${modalBadgeBg} px-2 py-1 fw-bold fs-6">
+              ${modalMatchPct}%
+            </span>
+          </div>
+          <div class="progress mb-2" style="height: 10px; border-radius: 5px; background-color: #e2e8f0;">
+            <div class="progress-bar ${modalProgressBg} progress-bar-striped" role="progressbar" style="width: ${modalMatchPct}%;" aria-valuenow="${modalMatchPct}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <div class="d-flex justify-content-between small text-muted mb-3" style="font-size: 0.78rem;">
+            <span><i class="bi bi-check2-circle text-success me-1"></i> ${modalMatching} of ${modalReqSkills.length} required skills matched</span>
+            <span>Formula: (${modalMatching} / ${modalReqSkills.length}) &times; 100 = <strong>${modalMatchPct}%</strong></span>
+          </div>
 
+          <!-- Matching skills with individual alignment percentages -->
+          <div class="mb-3 p-3 rounded bg-white border border-success border-opacity-50">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <small class="fw-bold text-success d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-1"></i> Matching Skills from Profile (${modalMatching}):
+              </small>
+              <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 small">
+                ${indAlignmentPct}% alignment each
+              </span>
+            </div>
+            ${matchBadges ? `
+              <div class="d-flex flex-wrap gap-1">${matchBadges}</div>
+            ` : `
+              <small class="text-muted fst-italic">No matching skills detected from profile.</small>
+            `}
+          </div>
+
+          <!-- Required skills missing from profile -->
           ${(item.missingSkills && item.missingSkills.length > 0) ? `
-            <div class="p-2 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 mt-2">
-              <div class="small fw-bold text-dark mb-1">
-                <i class="bi bi-stars text-warning me-1"></i> Additional Skills Required for 100% Match (${item.missingSkills.length}):
+            <div class="p-3 rounded-3 bg-light border border-danger border-opacity-25 mt-2">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="fw-bold text-danger d-flex align-items-center">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Required Skills Missing From Profile (${item.missingSkills.length}):
+                </small>
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 small">
+                  ${item.missingSkills.length} Missing
+                </span>
               </div>
               <div class="d-flex flex-wrap gap-1">${missingBadges}</div>
-              <small class="text-muted d-block mt-1">
-                Acquiring these ${item.missingSkills.length} additional skills qualifies your profile 100% for this role.
+              <small class="text-muted d-block mt-2" style="font-size: 0.74rem;">
+                <i class="bi bi-info-circle text-primary me-1"></i> Adding these ${item.missingSkills.length} skill${item.missingSkills.length === 1 ? '' : 's'} will raise your alignment to 100% for ${comp.name || item.company}.
               </small>
             </div>
           ` : `
-            <div class="p-2 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 mt-2">
+            <div class="p-3 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25 mt-2">
               <small class="text-success fw-bold d-block">
-                <i class="bi bi-patch-check-fill me-1"></i> 100% Match Achieved! You possess all required technical skills for this role.
+                <i class="bi bi-patch-check-fill me-1"></i> 100% Match Achieved! You possess all required technical skills for ${comp.name || item.company}.
               </small>
             </div>
           `}

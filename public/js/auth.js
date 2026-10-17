@@ -126,12 +126,7 @@ const Auth = {
                 </li>
               ` : ''}
               <li class="nav-item">
-                <a class="nav-link ${activePage === 'internships' ? 'active' : ''}" href="internships.html">
-                  <i class="bi bi-briefcase me-1"></i> Find Internships
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link ${activePage === 'recommendations' ? 'active' : ''}" href="internships.html?filter=recommended">
+                <a class="nav-link ${(activePage === 'recommendations' || activePage === 'internships') ? 'active' : ''}" href="internships.html">
                   <i class="bi bi-stars me-1"></i> Recommended Companies
                 </a>
               </li>
@@ -218,8 +213,7 @@ const Auth = {
             <div class="col-lg-2 col-md-6">
               <h6 class="text-white fw-bold mb-3">Platform Links</h6>
               <a href="index.html" class="footer-link">Home</a>
-              <a href="internships.html" class="footer-link">Find Internships</a>
-              <a href="internships.html?filter=recommended" class="footer-link">Recommended Companies</a>
+              <a href="internships.html" class="footer-link">Recommended Companies</a>
               <a href="upload-resume.html" class="footer-link">Upload Resume</a>
               <a href="dashboard.html" class="footer-link">Student Dashboard</a>
             </div>

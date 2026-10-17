@@ -39,14 +39,11 @@
               Track your internship applications, evaluate skills extracted from your resume, and discover matching roles across 25+ top tech employers.
             </p>
             <div class="d-flex flex-wrap gap-2">
-              <a href="applications.html" class="btn btn-brand-light btn-sm px-3">
-                <i class="bi bi-kanban me-1"></i> My Applications Tracker
-              </a>
-              <a href="internships.html" class="btn btn-brand-outline btn-sm text-white border-white px-3">
-                <i class="bi bi-briefcase me-1"></i> Find Internships
-              </a>
-              <a href="internships.html?filter=recommended" class="btn btn-brand-outline btn-sm text-white border-white px-3">
+              <a href="internships.html" class="btn btn-brand-light btn-sm px-3">
                 <i class="bi bi-stars me-1"></i> Recommended Companies
+              </a>
+              <a href="applications.html" class="btn btn-brand-outline btn-sm text-white border-white px-3">
+                <i class="bi bi-kanban me-1"></i> My Applications Tracker
               </a>
               <a href="saved.html" class="btn btn-brand-outline btn-sm text-white border-white px-3">
                 <i class="bi bi-bookmark-heart me-1"></i> Saved Internships
@@ -75,13 +72,13 @@
           </div>
         </div>
 
-        <!-- Available Internships -->
+        <!-- Recommended Companies Metric -->
         <div class="col-lg-3 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon purple"><i class="bi bi-briefcase"></i></div>
+            <div class="stat-icon purple"><i class="bi bi-building-check"></i></div>
             <div>
-              <div class="small text-muted fw-semibold">Available Opportunities</div>
-              <h5 class="fw-bold mb-0 text-dark" id="metric-total-internships">35+ Roles</h5>
+              <div class="small text-muted fw-semibold">Recommended Companies</div>
+              <h5 class="fw-bold mb-0 text-dark" id="metric-total-internships">-- Roles</h5>
             </div>
           </div>
         </div>
@@ -197,14 +194,14 @@
         </div>
       </div>
 
-      <!-- Top Recommended Internships Section (Feature 1: 10-20 recommendations) -->
+      <!-- Recommended Companies Section Tailored to Verified Skills -->
       <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
         <div>
-          <h4 class="fw-bold text-dark mb-1"><i class="bi bi-stars text-primary me-2"></i> Recommended Opportunities For You</h4>
-          <p class="text-secondary small mb-0">Ranked by algorithm based on your skill compatibility score.</p>
+          <h4 class="fw-bold text-dark mb-1"><i class="bi bi-stars text-primary me-2"></i> Recommended Companies Tailored to Verified Skills</h4>
+          <p class="text-secondary small mb-0">Opportunities strictly tailored to your verified technical skills with individual alignment percentages.</p>
         </div>
-        <a href="internships.html?filter=recommended" class="btn btn-brand-outline btn-sm mt-2 mt-sm-0">
-          Explore All Recommendations <i class="bi bi-arrow-right ms-1"></i>
+        <a href="internships.html" class="btn btn-brand-outline btn-sm mt-2 mt-sm-0">
+          Explore All Recommended Companies <i class="bi bi-arrow-right ms-1"></i>
         </a>
       </div>
 
@@ -356,10 +353,9 @@
             <div class="card card-custom p-4 bg-light border text-center">
               <i class="bi bi-stars text-warning fs-1 mb-2"></i>
               <h6 class="fw-bold text-dark">No Tailored Recommendations Yet</h6>
-              <p class="text-secondary small mb-3">Upload your resume to extract your technical skills and unlock personalized company recommendations.</p>
+              <p class="text-secondary small mb-3">Upload your resume to extract your verified technical skills and unlock personalized company recommendations.</p>
               <div class="d-flex justify-content-center gap-2">
-                <a href="upload-resume.html" class="btn btn-brand btn-sm px-3"><i class="bi bi-file-earmark-arrow-up me-1"></i> Upload Resume</a>
-                <a href="internships.html" class="btn btn-outline-secondary btn-sm px-3"><i class="bi bi-briefcase me-1"></i> Browse All Openings</a>
+                <a href="upload-resume.html" class="btn btn-brand btn-sm px-4"><i class="bi bi-file-earmark-arrow-up me-1"></i> Upload Resume to Unlock Recommendations</a>
               </div>
             </div>
           </div>
@@ -368,49 +364,119 @@
       }
 
       grid.innerHTML = items.map((item) => {
+        const reqList = item.required_skills || [];
+        const totalReq = reqList.length > 0 ? reqList.length : ((item.matchingSkills?.length || 0) + (item.missingSkills?.length || 0) || 1);
+        const matchingSkills = item.matchingSkills || [];
+        const missingSkills = item.missingSkills || [];
+        const matchCount = matchingSkills.length;
+        const matchPct = (item.matchScore !== null && item.matchScore !== undefined)
+          ? Math.round(Number(item.matchScore))
+          : Math.round((matchCount / totalReq) * 100);
+
+        // Individual alignment percentage per required skill (e.g., 20% or 25% or 33.3%)
+        const indAlignmentPct = totalReq > 0 ? (100 / totalReq).toFixed(1).replace('.0', '') : '0';
+
+        const progressBg = matchPct >= 70 ? 'bg-success' : (matchPct >= 40 ? 'bg-primary' : 'bg-warning');
+        const badgeBg = matchPct >= 70 ? 'bg-success text-white' : (matchPct >= 40 ? 'bg-primary text-white' : 'bg-warning text-dark');
+
         return `
           <div class="col-lg-6 col-md-12 mb-4">
-            <div class="card card-custom p-4 h-100 bg-white d-flex flex-column justify-content-between">
+            <div class="card card-custom p-4 h-100 bg-white d-flex flex-column justify-content-between border border-primary border-opacity-25 shadow-sm">
               <div>
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill fw-semibold">
                     ${item.category}
                   </span>
-                  <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill small fw-semibold">
-                    <i class="bi bi-stars me-1"></i> Skill Matched
+                  <span class="badge ${badgeBg} px-3 py-1 rounded-pill small fw-bold shadow-sm">
+                    <i class="bi bi-pie-chart-fill me-1"></i> ${matchPct}% Match
                   </span>
                 </div>
 
                 <h5 class="fw-bold text-dark mb-1">${item.title}</h5>
                 <div class="text-muted small fw-semibold mb-3">
-                  <i class="bi bi-building text-primary me-1"></i> ${item.company} &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+                  <i class="bi bi-building text-primary me-1"></i> <strong class="text-dark fs-6">${item.company}</strong> &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 mb-3">
-                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-laptop me-1"></i> ${item.work_mode}</span>
-                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-cash me-1"></i> ${item.stipend || 'Competitive'}</span>
-                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-clock me-1"></i> ${item.duration}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-laptop me-1 text-primary"></i> ${item.work_mode}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-cash me-1 text-success"></i> ${item.stipend || 'Competitive'}</span>
+                  <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-clock me-1 text-warning"></i> ${item.duration}</span>
                 </div>
 
-                ${item.missingSkills && item.missingSkills.length > 0 ? `
-                  <div class="small mb-3 p-2 rounded bg-light border border-warning border-opacity-25">
-                    <div class="fw-semibold text-dark mb-1 small">
-                      <i class="bi bi-lightbulb-fill text-warning me-1"></i> Additional Skills Required for 100% Match:
+                <!-- 1. Extracted Skill Match Percentage & Simple Progress Bar -->
+                <div class="p-3 rounded bg-light border mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small fw-bold text-dark d-flex align-items-center">
+                      <i class="bi bi-speedometer2 text-primary me-2 fs-6"></i> Extracted Skill Match:
+                    </span>
+                    <span class="badge ${badgeBg} px-2 py-1 fw-bold fs-6">${matchPct}%</span>
+                  </div>
+                  <div class="progress" style="height: 10px; border-radius: 5px; background-color: #e2e8f0;">
+                    <div class="progress-bar ${progressBg} progress-bar-striped" role="progressbar" style="width: ${matchPct}%;" aria-valuenow="${matchPct}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <div class="d-flex justify-content-between small text-muted mt-2" style="font-size: 0.76rem;">
+                    <span><i class="bi bi-check2-circle text-success me-1"></i> ${matchCount} of ${totalReq} required skills matched</span>
+                    <span>Formula: (${matchCount} / ${totalReq}) &times; 100 = <strong>${matchPct}%</strong></span>
+                  </div>
+                </div>
+
+                <!-- 2. Matching Skills with Individual Alignment Percentages -->
+                <div class="mb-3 p-3 rounded bg-white border border-success border-opacity-50">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="fw-bold text-success d-flex align-items-center">
+                      <i class="bi bi-check-circle-fill me-1"></i> Matching Skills from Profile (${matchCount}):
+                    </small>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 small">
+                      ${indAlignmentPct}% alignment each
+                    </span>
+                  </div>
+                  ${matchingSkills.length > 0 ? `
+                    <div class="d-flex flex-wrap gap-1">
+                      ${matchingSkills.map((s) => `
+                        <span class="skill-tag skill-tag-matched">
+                          <i class="bi bi-check2 text-success me-1"></i>${s}
+                          <span class="badge bg-success text-white ms-1 rounded-pill small">+${indAlignmentPct}%</span>
+                        </span>
+                      `).join('')}
+                    </div>
+                  ` : `
+                    <small class="text-muted fst-italic">No matching skills detected from profile.</small>
+                  `}
+                </div>
+
+                <!-- 3. Required Skills Currently Missing from User's Profile -->
+                ${missingSkills.length > 0 ? `
+                  <div class="mb-3 p-3 rounded bg-light border border-danger border-opacity-25">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <small class="fw-bold text-danger d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> Required Skills Missing From Profile (${missingSkills.length}):
+                      </small>
+                      <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 small">
+                        ${missingSkills.length} Missing
+                      </span>
                     </div>
                     <div class="d-flex flex-wrap gap-1">
-                      ${item.missingSkills.map((s) => `<span class="badge bg-warning bg-opacity-25 text-dark border border-warning border-opacity-50">${s}</span>`).join('')}
+                      ${missingSkills.map((s) => `
+                        <span class="skill-tag skill-tag-missing">
+                          <i class="bi bi-x-circle text-danger me-1"></i>${s}
+                          <span class="badge bg-danger text-white ms-1 rounded-pill small">Missing (-${indAlignmentPct}%)</span>
+                        </span>
+                      `).join('')}
                     </div>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.74rem;">
+                      <i class="bi bi-info-circle text-primary me-1"></i> Adding these ${missingSkills.length} skill${missingSkills.length === 1 ? '' : 's'} to your profile will achieve a 100% match for ${item.company}.
+                    </small>
                   </div>
                 ` : `
-                  <div class="small mb-3 p-2 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
-                    <i class="bi bi-check-circle-fill me-1"></i> 100% Skill Match! You possess all required technical skills for this role.
+                  <div class="small mb-3 p-3 rounded bg-success bg-opacity-10 text-success border border-success border-opacity-25 fw-semibold">
+                    <i class="bi bi-patch-check-fill me-1"></i> 100% Verified Match! No missing skills &mdash; your verified skills fully cover this opportunity.
                   </div>
                 `}
               </div>
 
               <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-2">
-                <a href="internships.html?filter=recommended" class="btn btn-brand-outline btn-sm w-100">
-                  View Full Details & Apply <i class="bi bi-arrow-right ms-1"></i>
+                <a href="internships.html" class="btn btn-brand-outline btn-sm w-100">
+                  View Full Company Details & Apply <i class="bi bi-arrow-right ms-1"></i>
                 </a>
               </div>
             </div>
@@ -483,7 +549,7 @@
           tableBody.innerHTML = `
             <tr>
               <td colspan="6" class="text-center text-muted py-4">
-                No applications submitted yet. Browse <a href="internships.html" class="fw-bold text-primary">internship listings</a> and click Apply!
+                No applications submitted yet. Explore <a href="internships.html" class="fw-bold text-primary">recommended companies</a> and click Apply!
               </td>
             </tr>
           `;

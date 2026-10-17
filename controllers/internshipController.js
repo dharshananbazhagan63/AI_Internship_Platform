@@ -243,6 +243,7 @@ class InternshipController {
         limit: limitNum,
         totalPages: limitNum > 0 ? Math.ceil(totalMatching / limitNum) : 1,
         userSkillsCount: userSkills.length,
+        userSkills: userSkills,
         internships: pagedResults
       });
     } catch (err) {
