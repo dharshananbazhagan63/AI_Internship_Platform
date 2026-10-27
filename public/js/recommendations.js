@@ -900,11 +900,22 @@ function openDetailsModal(id) {
   const websiteBtn = document.getElementById('modal-btn-website');
   if (websiteBtn) {
     websiteBtn.onclick = () => {
-      let url = comp.website || item.official_url;
-      if (!url || url.includes('example.')) {
-        url = `/demo-company.html?id=${comp.id || item.company_id || item.id}`;
+      const KNOWN_COMPANY_WEBSITES = {
+        'Kissflow': 'https://kissflow.com',
+        'Zoho Corporation': 'https://www.zoho.com',
+        'Freshworks': 'https://www.freshworks.com',
+        'GUVI Geek Networks': 'https://www.guvi.in',
+        'Ramco Systems': 'https://www.ramco.com',
+        'Chargebee Technologies': 'https://www.chargebee.com',
+        'LatentView Analytics': 'https://www.latentview.com',
+        'Kaar Technologies': 'https://www.kaartech.com'
+      };
+      const compName = item.company || comp.name || '';
+      let url = comp.website;
+      if (!url || url.startsWith('/demo-company') || url.includes('example.')) {
+        url = KNOWN_COMPANY_WEBSITES[compName] || `https://${compName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
       }
-      window.open(url, '_blank');
+      window.open(url, '_blank', 'noopener,noreferrer');
     };
   }
 

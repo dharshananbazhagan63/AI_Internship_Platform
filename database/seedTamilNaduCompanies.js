@@ -9,7 +9,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://zohocorp.example.com",
+    website: "https://www.zoho.com",
     contact_email: "contact@zohocorp.com",
     recruitment_email: "campus-hiring@zohocorp.com",
     is_verified: 1
@@ -22,7 +22,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://freshworks.example.com",
+    website: "https://www.freshworks.com",
     contact_email: "support@freshworks.com",
     recruitment_email: "university-recruitment@freshworks.com",
     is_verified: 1
@@ -35,7 +35,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://guvi.example.in",
+    website: "https://www.guvi.in",
     contact_email: "contact@guvi.in",
     recruitment_email: "careers@guvi.in",
     is_verified: 1
@@ -48,7 +48,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://ramco.example.com",
+    website: "https://www.ramco.com",
     contact_email: "contact@ramco.com",
     recruitment_email: "university-talent@ramco.com",
     is_verified: 1
@@ -61,7 +61,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://kissflow.example.com",
+    website: "https://kissflow.com",
     contact_email: "hello@kissflow.com",
     recruitment_email: "culture-talent@kissflow.com",
     is_verified: 1
@@ -74,7 +74,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://chargebee.example.com",
+    website: "https://www.chargebee.com",
     contact_email: "contact@chargebee.com",
     recruitment_email: "talent-acquisition@chargebee.com",
     is_verified: 1
@@ -87,7 +87,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://latentview.example.com",
+    website: "https://www.latentview.com",
     contact_email: "info@latentview.com",
     recruitment_email: "campus@latentview.com",
     is_verified: 1
@@ -100,7 +100,7 @@ const tamilNaduCompanies = [
     city: "Chennai",
     state: "Tamil Nadu",
     country: "India",
-    website: "https://kaartech.example.com",
+    website: "https://www.kaartech.com",
     contact_email: "contact@kaartech.com",
     recruitment_email: "campus-careers@kaartech.com",
     is_verified: 1
@@ -401,7 +401,7 @@ async function seedTamilNadu() {
 
   // 4. Update demonstration portal URLs
   await db.run("UPDATE internships SET official_url = '/demo-application-portal.html?id=' || id WHERE official_url IS NULL OR official_url LIKE '%example.%' OR official_url = '/demo-application-portal.html'");
-  await db.run("UPDATE companies SET website = '/demo-company.html?id=' || id WHERE website IS NULL OR website LIKE '%example.%'");
+  await db.run("UPDATE companies SET website = 'https://' || LOWER(REPLACE(name, ' ', '')) || '.com' WHERE website IS NULL OR website LIKE '%example.%'");
 
   const tnCount = await db.get("SELECT COUNT(*) as count FROM companies WHERE state = 'Tamil Nadu' OR city = 'Chennai'");
   const tnInternCount = await db.get("SELECT COUNT(*) as count FROM internships WHERE location LIKE '%Chennai%' OR location LIKE '%Tamil Nadu%'");

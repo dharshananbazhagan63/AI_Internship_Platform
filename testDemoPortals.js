@@ -43,9 +43,9 @@ async function runTests() {
   const internRes = await request('/api/internships/1');
   const intern = internRes.json?.internship;
   const isUrlClean = intern && intern.official_url.startsWith('/demo-application-portal.html') && !intern.official_url.includes('example.');
-  const isWebClean = intern && intern.company_details.website.startsWith('/demo-company.html') && !intern.company_details.website.includes('example.');
+  const isWebClean = intern && (intern.company_details.website.startsWith('http') || intern.company_details.website.startsWith('/demo-company.html')) && !intern.company_details.website.includes('example.');
   console.log('[Test 4] Internship official_url is local portal:', isUrlClean ? 'PASS' : 'FAIL', `(${intern?.official_url})`);
-  console.log('[Test 5] Company website is local portal:', isWebClean ? 'PASS' : 'FAIL', `(${intern?.company_details?.website})`);
+  console.log('[Test 5] Company website is clean valid URL:', isWebClean ? 'PASS' : 'FAIL', `(${intern?.company_details?.website})`);
 
   // Test 6: Check Company API endpoint
   const compApiRes = await request('/api/internships/company/1');

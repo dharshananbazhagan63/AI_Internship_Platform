@@ -129,6 +129,9 @@
               <i class="bi bi-geo-alt-fill text-danger me-1"></i> San Francisco, California, United States
             </p>
             <div class="d-flex flex-wrap gap-2">
+              <a id="btn-comp-website" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-warning btn-sm px-3 rounded-pill text-dark fw-bold">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Visit Official Website
+              </a>
               <button id="btn-comp-maps" class="btn btn-outline-light btn-sm px-3 rounded-pill">
                 <i class="bi bi-geo-alt me-1"></i> View on Google Maps
               </button>
@@ -190,9 +193,15 @@
             </div>
 
             <h6 class="fw-bold text-dark mb-2 small text-uppercase text-muted">General Contact</h6>
-            <div class="p-2 bg-light rounded-3 border small">
+            <div class="p-2 bg-light rounded-3 border mb-3 small">
               <i class="bi bi-telephone-fill text-secondary me-1"></i>
               <span id="comp-contact-email" class="text-dark fw-semibold">info@...</span>
+            </div>
+
+            <h6 class="fw-bold text-dark mb-2 small text-uppercase text-muted">Official Website</h6>
+            <div class="p-2 bg-light rounded-3 border small">
+              <i class="bi bi-globe text-primary me-1"></i>
+              <a id="comp-website-link" href="#" target="_blank" rel="noopener noreferrer" class="text-primary fw-semibold text-break">Visit Website</a>
             </div>
           </div>
         </div>
@@ -279,7 +288,72 @@
         document.getElementById('comp-recruitment-email').textContent = comp.recruitment_email || comp.contact_email || 'careers@' + comp.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
         document.getElementById('comp-contact-email').textContent = comp.contact_email || 'contact@' + comp.name.toLowerCase().replace(/[^a-z]/g, '') + '.com';
 
-        // Buttons
+        const KNOWN_COMPANY_WEBSITES = {
+          'Kissflow': 'https://kissflow.com',
+          'Zoho Corporation': 'https://www.zoho.com',
+          'Freshworks': 'https://www.freshworks.com',
+          'GUVI Geek Networks': 'https://www.guvi.in',
+          'Ramco Systems': 'https://www.ramco.com',
+          'Chargebee Technologies': 'https://www.chargebee.com',
+          'LatentView Analytics': 'https://www.latentview.com',
+          'Kaar Technologies': 'https://www.kaartech.com',
+          'NexGen Cloud Solutions': 'https://nexgencloud.com',
+          'Cognitive Labs AI': 'https://cognitivelabs.ai',
+          'PixelCraft Digital': 'https://pixelcraft.design',
+          'Skyline Infrastructure': 'https://skylineinfra.com',
+          'DataPulse Analytics': 'https://datapulse.io',
+          'InsightMetrics Corp': 'https://insightmetrics.com',
+          'Fortress Cyber Systems': 'https://fortresscyber.org',
+          'AppSphere Technologies': 'https://appsphere.app',
+          'Apex Enterprise Systems': 'https://apexsystems.com',
+          'Vivid Visual Studio': 'https://vividvisual.co',
+          'QuantumByte Labs': 'https://quantumbyte.com',
+          'Synthetix Health Tech': 'https://synthetixhealth.com',
+          'HyperScale Networks': 'https://hyperscalenet.com',
+          'OmniRobotics Solutions': 'https://omnirobotics.tech',
+          'Aura Fintech Global': 'https://aurafintech.co.uk',
+          'GreenGrid Energy AI': 'https://greengridai.com',
+          'StreamSync Media': 'https://streamsync.ca',
+          'Veritas Quality Assurance': 'https://veritasqa.com',
+          'CodeCraft Studios': 'https://codecraftstudios.com',
+          'BlueShift DevSecOps': 'https://blueshiftsecurity.sg',
+          'Krypton Web3 Labs': 'https://kryptonlabs.ch',
+          'BioInformatix Research': 'https://bioinformatix.org',
+          'UrbanPulse Smart Mobility': 'https://urbanpulse.com.au',
+          'NextGen Gaming Technologies': 'https://nextgengaming.com',
+          'EchoSense Natural Language': 'https://echosense.com'
+        };
+
+        function getCompanyWebsite(companyName, compWebsite) {
+          if (compWebsite && !compWebsite.startsWith('/demo-company') && !compWebsite.includes('example.')) {
+            return compWebsite;
+          }
+          if (companyName && KNOWN_COMPANY_WEBSITES[companyName]) {
+            return KNOWN_COMPANY_WEBSITES[companyName];
+          }
+          return `https://${(companyName || 'company').toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+        }
+
+        const originalWebsite = getCompanyWebsite(comp.name, comp.website);
+
+        // Immediate redirect support if requested via ?redirect=true
+        if (new URLSearchParams(window.location.search).get('redirect') === 'true' && originalWebsite) {
+          window.location.href = originalWebsite;
+          return;
+        }
+
+        // Buttons & Links
+        const websiteBtn = document.getElementById('btn-comp-website');
+        if (websiteBtn) {
+          websiteBtn.href = originalWebsite;
+        }
+
+        const websiteLink = document.getElementById('comp-website-link');
+        if (websiteLink) {
+          websiteLink.href = originalWebsite;
+          websiteLink.textContent = originalWebsite.replace(/^https?:\/\//, '');
+        }
+
         document.getElementById('btn-comp-maps').onclick = () => {
           const query = encodeURIComponent(fullAddress || comp.name);
           window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');

@@ -684,15 +684,59 @@
       document.getElementById('map-address-text').textContent = fullAddress;
 
       // 2. Official Company Profile Button (Opens verified company website in a new tab)
-      let officialWebsiteUrl = comp.website || item.official_url;
-      if (!officialWebsiteUrl || officialWebsiteUrl.includes('example.')) {
-        officialWebsiteUrl = `/demo-company.html?id=${comp.id || item.company_id || item.id}`;
+      const KNOWN_COMPANY_WEBSITES = {
+        'Kissflow': 'https://kissflow.com',
+        'Zoho Corporation': 'https://www.zoho.com',
+        'Freshworks': 'https://www.freshworks.com',
+        'GUVI Geek Networks': 'https://www.guvi.in',
+        'Ramco Systems': 'https://www.ramco.com',
+        'Chargebee Technologies': 'https://www.chargebee.com',
+        'LatentView Analytics': 'https://www.latentview.com',
+        'Kaar Technologies': 'https://www.kaartech.com',
+        'NexGen Cloud Solutions': 'https://nexgencloud.com',
+        'Cognitive Labs AI': 'https://cognitivelabs.ai',
+        'PixelCraft Digital': 'https://pixelcraft.design',
+        'Skyline Infrastructure': 'https://skylineinfra.com',
+        'DataPulse Analytics': 'https://datapulse.io',
+        'InsightMetrics Corp': 'https://insightmetrics.com',
+        'Fortress Cyber Systems': 'https://fortresscyber.org',
+        'AppSphere Technologies': 'https://appsphere.app',
+        'Apex Enterprise Systems': 'https://apexsystems.com',
+        'Vivid Visual Studio': 'https://vividvisual.co',
+        'QuantumByte Labs': 'https://quantumbyte.com',
+        'Synthetix Health Tech': 'https://synthetixhealth.com',
+        'HyperScale Networks': 'https://hyperscalenet.com',
+        'OmniRobotics Solutions': 'https://omnirobotics.tech',
+        'Aura Fintech Global': 'https://aurafintech.co.uk',
+        'GreenGrid Energy AI': 'https://greengridai.com',
+        'StreamSync Media': 'https://streamsync.ca',
+        'Veritas Quality Assurance': 'https://veritasqa.com',
+        'CodeCraft Studios': 'https://codecraftstudios.com',
+        'BlueShift DevSecOps': 'https://blueshiftsecurity.sg',
+        'Krypton Web3 Labs': 'https://kryptonlabs.ch',
+        'BioInformatix Research': 'https://bioinformatix.org',
+        'UrbanPulse Smart Mobility': 'https://urbanpulse.com.au',
+        'NextGen Gaming Technologies': 'https://nextgengaming.com',
+        'EchoSense Natural Language': 'https://echosense.com'
+      };
+
+      let officialWebsiteUrl = comp.website;
+      if (!officialWebsiteUrl || officialWebsiteUrl.startsWith('/demo-company') || officialWebsiteUrl.includes('example.')) {
+        officialWebsiteUrl = KNOWN_COMPANY_WEBSITES[companyName] || `https://${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
       }
       
       const btnHeroWebsite = document.getElementById('btn-hero-official-website');
       const btnSideWebsite = document.getElementById('btn-side-official-profile');
-      if (btnHeroWebsite) btnHeroWebsite.href = officialWebsiteUrl;
-      if (btnSideWebsite) btnSideWebsite.href = officialWebsiteUrl;
+      if (btnHeroWebsite) {
+        btnHeroWebsite.href = officialWebsiteUrl;
+        btnHeroWebsite.target = '_blank';
+        btnHeroWebsite.rel = 'noopener noreferrer';
+      }
+      if (btnSideWebsite) {
+        btnSideWebsite.href = officialWebsiteUrl;
+        btnSideWebsite.target = '_blank';
+        btnSideWebsite.rel = 'noopener noreferrer';
+      }
 
       // 3. Verified Emails Only
       const recruitmentEmail = comp.recruitment_email || comp.contact_email || `careers@${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;

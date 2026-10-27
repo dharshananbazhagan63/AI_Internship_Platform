@@ -414,10 +414,63 @@
         internshipData = data.internship;
         const comp = internshipData.company_details || {};
 
+        // Canonical company websites dictionary for verified authentic redirection
+        const KNOWN_COMPANY_WEBSITES = {
+          'Kissflow': 'https://kissflow.com',
+          'Zoho Corporation': 'https://www.zoho.com',
+          'Freshworks': 'https://www.freshworks.com',
+          'GUVI Geek Networks': 'https://www.guvi.in',
+          'Ramco Systems': 'https://www.ramco.com',
+          'Chargebee Technologies': 'https://www.chargebee.com',
+          'LatentView Analytics': 'https://www.latentview.com',
+          'Kaar Technologies': 'https://www.kaartech.com',
+          'NexGen Cloud Solutions': 'https://nexgencloud.com',
+          'Cognitive Labs AI': 'https://cognitivelabs.ai',
+          'PixelCraft Digital': 'https://pixelcraft.design',
+          'Skyline Infrastructure': 'https://skylineinfra.com',
+          'DataPulse Analytics': 'https://datapulse.io',
+          'InsightMetrics Corp': 'https://insightmetrics.com',
+          'Fortress Cyber Systems': 'https://fortresscyber.org',
+          'AppSphere Technologies': 'https://appsphere.app',
+          'Apex Enterprise Systems': 'https://apexsystems.com',
+          'Vivid Visual Studio': 'https://vividvisual.co',
+          'QuantumByte Labs': 'https://quantumbyte.com',
+          'Synthetix Health Tech': 'https://synthetixhealth.com',
+          'HyperScale Networks': 'https://hyperscalenet.com',
+          'OmniRobotics Solutions': 'https://omnirobotics.tech',
+          'Aura Fintech Global': 'https://aurafintech.co.uk',
+          'GreenGrid Energy AI': 'https://greengridai.com',
+          'StreamSync Media': 'https://streamsync.ca',
+          'Veritas Quality Assurance': 'https://veritasqa.com',
+          'CodeCraft Studios': 'https://codecraftstudios.com',
+          'BlueShift DevSecOps': 'https://blueshiftsecurity.sg',
+          'Krypton Web3 Labs': 'https://kryptonlabs.ch',
+          'BioInformatix Research': 'https://bioinformatix.org',
+          'UrbanPulse Smart Mobility': 'https://urbanpulse.com.au',
+          'NextGen Gaming Technologies': 'https://nextgengaming.com',
+          'EchoSense Natural Language': 'https://echosense.com'
+        };
+
+        function getCompanyWebsite(companyName, compWebsite) {
+          if (compWebsite && !compWebsite.startsWith('/demo-company') && !compWebsite.includes('example.')) {
+            return compWebsite;
+          }
+          if (companyName && KNOWN_COMPANY_WEBSITES[companyName]) {
+            return KNOWN_COMPANY_WEBSITES[companyName];
+          }
+          return `https://${(companyName || 'company').toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+        }
+
+        const companyOfficialWebsite = getCompanyWebsite(internshipData.company, comp.website);
+
         // Render page title and headers
         document.title = `${internshipData.title} at ${internshipData.company} — Career Portal`;
-        document.getElementById('breadcrumb-company').textContent = internshipData.company;
-        document.getElementById('breadcrumb-company').href = `/demo-company.html?id=${comp.id || internshipData.company_id || 1}`;
+        const breadcrumbComp = document.getElementById('breadcrumb-company');
+        breadcrumbComp.textContent = internshipData.company;
+        breadcrumbComp.href = companyOfficialWebsite;
+        breadcrumbComp.target = '_blank';
+        breadcrumbComp.rel = 'noopener noreferrer';
+        breadcrumbComp.setAttribute('title', `Visit official website of ${internshipData.company}`);
         document.getElementById('breadcrumb-title').textContent = internshipData.title;
 
         // Banner details
@@ -426,7 +479,19 @@
           this.src = 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=128';
         };
         document.getElementById('portal-company-name').textContent = internshipData.company;
-        document.getElementById('portal-btn-company-profile').href = `/demo-company.html?id=${comp.id || internshipData.company_id || 1}`;
+        
+        // Link View Company Profile button directly to the original company website
+        const profileBtn = document.getElementById('portal-btn-company-profile');
+        profileBtn.href = companyOfficialWebsite;
+        profileBtn.target = '_blank';
+        profileBtn.rel = 'noopener noreferrer';
+        profileBtn.setAttribute('title', `Visit official website of ${internshipData.company}`);
+        profileBtn.onclick = (e) => {
+          e.stopPropagation();
+          window.open(companyOfficialWebsite, '_blank', 'noopener,noreferrer');
+          return false;
+        };
+
         document.getElementById('portal-role-title').textContent = internshipData.title;
         document.getElementById('portal-category').textContent = internshipData.category;
         document.getElementById('portal-location').textContent = internshipData.location;
@@ -566,7 +631,14 @@
         document.getElementById('success-role-title').textContent = internshipData.title;
         document.getElementById('success-company-name').textContent = internshipData.company;
         const comp = internshipData.company_details || {};
-        document.getElementById('success-btn-company').href = `/demo-company.html?id=${comp.id || internshipData.company_id || 1}`;
+        const successCompanyUrl = getCompanyWebsite(internshipData.company, comp.website);
+        const successCompBtn = document.getElementById('success-btn-company');
+        if (successCompBtn) {
+          successCompBtn.href = successCompanyUrl;
+          successCompBtn.target = '_blank';
+          successCompBtn.rel = 'noopener noreferrer';
+          successCompBtn.setAttribute('title', `Visit official website of ${internshipData.company}`);
+        }
       }
 
       Auth.showToast('Applied Successfully! 🎉 Your application has been officially submitted.', 'success');
