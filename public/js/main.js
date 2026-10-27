@@ -4,7 +4,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   Auth.renderNavbar('home');
-  Auth.renderFooter();
 
   loadHomepageStats();
   loadFeaturedInternships();

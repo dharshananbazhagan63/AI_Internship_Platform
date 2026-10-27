@@ -609,7 +609,10 @@ function renderInternshipCardFull(item) {
 
   return `
     <div class="col-lg-6 col-12 mb-4">
-      <div class="card card-custom h-100 p-4 d-flex flex-column justify-content-between border-primary border-opacity-25 shadow-sm">
+      <div class="card card-custom h-100 p-4 d-flex flex-column justify-content-between border-primary border-opacity-25 shadow-sm"
+           onclick="if (!event.target.closest('button, a, input, select')) window.location.href='company-details.html?id=${item.id}'"
+           style="cursor: pointer;"
+           title="Click to view full Company Details for ${item.company}">
         <div>
           <!-- Header: Category & Match Percentage Badge -->
           <div class="d-flex justify-content-between align-items-start mb-2">
@@ -628,11 +631,18 @@ function renderInternshipCardFull(item) {
 
           <!-- Company Name & Internship Title -->
           <div class="d-flex align-items-center mt-3 mb-2">
-            ${logoHtml}
+            <a href="company-details.html?id=${item.id}" class="text-decoration-none">
+              ${logoHtml}
+            </a>
             <div>
-              <h5 class="fw-bold mb-0 text-dark">${item.title}</h5>
+              <a href="company-details.html?id=${item.id}" class="text-decoration-none text-dark">
+                <h5 class="fw-bold mb-0 text-dark transition-hover">${item.title}</h5>
+              </a>
               <div class="text-muted fw-semibold small mt-1">
-                <i class="bi bi-building me-1 text-primary"></i> <strong class="text-dark fs-6">${item.company}</strong> &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+                <a href="company-details.html?id=${item.id}" class="text-decoration-none text-muted">
+                  <i class="bi bi-building me-1 text-primary"></i> <strong class="text-dark fs-6">${item.company}</strong>
+                </a>
+                &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
               </div>
             </div>
           </div>
@@ -720,11 +730,14 @@ function renderInternshipCardFull(item) {
           `}
         </div>
 
-        <!-- Action Buttons: View Details, Save, Apply Now -->
+        <!-- Action Buttons: Company Details Page, Save, Apply Now -->
         <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
           <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary btn-sm px-3" onclick="openDetailsModal(${item.id})">
-              <i class="bi bi-info-circle me-1"></i> View Details
+            <a href="company-details.html?id=${item.id}" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
+              <i class="bi bi-building me-1"></i> Company Details
+            </a>
+            <button class="btn btn-outline-secondary btn-sm px-2" onclick="openDetailsModal(${item.id})" title="Quick Preview Modal">
+              <i class="bi bi-info-circle me-1"></i>
             </button>
             ${saveBtn}
           </div>
@@ -875,6 +888,12 @@ function openDetailsModal(id) {
   const perksList = document.getElementById('modal-perks');
   if (perksList) {
     perksList.innerHTML = (item.perks || []).map((p) => `<li><i class="bi bi-award text-primary me-2"></i>${p}</li>`).join('');
+  }
+
+  // 0. Dedicated Company Details Page button
+  const compDetailsBtn = document.getElementById('modal-btn-company-details');
+  if (compDetailsBtn) {
+    compDetailsBtn.href = `company-details.html?id=${item.id}`;
   }
 
   // 1. View Company Website button
@@ -1036,11 +1055,38 @@ async function handleApplyClick(id) {
 }
 
 /**
- * Show Celebratory "Applied Successfully!" Modal Popup
+ * Show Celebratory "Applied Successfully!" Modal Popup or Sophisticated Particles Effect
  */
 function showAppliedSuccessModal(id) {
   const item = allInternshipsData.find((x) => x.id === id) || selectedInternship;
   if (!item) return;
+
+  // Close details modal if currently open
+  const detailsModalEl = document.getElementById('internshipDetailsModal');
+  if (detailsModalEl) {
+    const detailsModal = bootstrap.Modal.getInstance(detailsModalEl);
+    if (detailsModal) detailsModal.hide();
+  }
+
+  // Trigger sophisticated floating particles effect & subtle accomplishment notification
+  if (window.ApplicationSuccessEffect) {
+    const portalUrl = `/demo-application-portal.html?id=${item.id}`;
+    let matchPct = null;
+    const reqSkills = item.required_skills || [];
+    if (reqSkills.length > 0 && item.matchingSkills) {
+      matchPct = Math.round((item.matchingSkills.length / reqSkills.length) * 100);
+    } else if (item.matchScore !== null && item.matchScore !== undefined) {
+      matchPct = Math.round(Number(item.matchScore));
+    }
+
+    window.ApplicationSuccessEffect.trigger({
+      roleTitle: item.title,
+      companyName: item.company,
+      matchScore: matchPct,
+      portalUrl: portalUrl
+    });
+    return;
+  }
 
   const roleEl = document.getElementById('success-modal-role');
   const compEl = document.getElementById('success-modal-company');
@@ -1060,13 +1106,6 @@ function showAppliedSuccessModal(id) {
   }
   if (portalBtn) {
     portalBtn.href = `/demo-application-portal.html?id=${item.id}`;
-  }
-
-  // Close details modal if currently open
-  const detailsModalEl = document.getElementById('internshipDetailsModal');
-  if (detailsModalEl) {
-    const detailsModal = bootstrap.Modal.getInstance(detailsModalEl);
-    if (detailsModal) detailsModal.hide();
   }
 
   const successModalEl = document.getElementById('appliedSuccessModal');

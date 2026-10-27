@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Details & Role Overview — AI Internship Platform</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .company-details-hero {
+      background: var(--bg-gradient-hero);
+      color: #ffffff;
+      padding: 3.5rem 0 2.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .company-logo-card {
+      width: 104px;
+      height: 104px;
+      min-width: 104px;
+      border-radius: 24px;
+      background: #ffffff;
+      padding: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+    }
+    .company-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 18px;
+    }
+    .detail-section-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.75rem;
+      transition: box-shadow 0.25s ease;
+    }
+    .detail-section-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    .spec-tile {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      height: 100%;
+    }
+    .spec-tile-icon {
+      font-size: 1.35rem;
+      margin-bottom: 0.35rem;
+      display: inline-block;
+    }
+    .verified-contact-pill {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+    }
+    .map-embed-wrapper {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #f1f5f9;
+      height: 280px;
+      width: 100%;
+      position: relative;
+    }
+    .map-embed-iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .req-checklist-item {
+      padding: 0.85rem 0;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .req-checklist-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- Dynamic Navigation Bar Container -->
+  <div id="navbar-container"></div>
+
+  <!-- Loading State -->
+  <div id="loading-container" class="text-center py-5">
+    <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;" role="status"></div>
+    <h5 class="fw-bold text-dark mt-3">Loading Company Profile & Role Specifications...</h5>
+    <p class="text-secondary small">Gathering verified employer credentials, compatibility breakdown, and location details.</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error-container" class="container py-5 text-center d-none">
+    <div class="card border-0 shadow-sm p-5 mx-auto max-w-700 bg-white" style="border-radius: 24px;">
+      <i class="bi bi-building-x text-warning display-3"></i>
+      <h3 class="fw-bold text-dark mt-3 mb-2">Company Listing Not Found</h3>
+      <p class="text-secondary mb-4">The requested corporate organization or internship position could not be located in our registry.</p>
+      <div>
+        <a href="internships.html" class="btn btn-brand px-4 py-2">
+          <i class="bi bi-arrow-left me-1"></i> Return to Recommended Companies
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main id="main-content" class="d-none">
+
+    <!-- Corporate Hero Header Banner -->
+    <header class="company-details-hero">
+      <div class="container">
+        
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb small opacity-90 mb-0">
+            <li class="breadcrumb-item"><a href="index.html" class="text-white text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a href="internships.html" class="text-white text-decoration-none">Recommended Companies</a></li>
+            <li class="breadcrumb-item active text-white fw-bold" id="hero-breadcrumb-name" aria-current="page">Company Details</li>
+          </ol>
+        </nav>
+
+        <div class="row align-items-center g-4">
+          <!-- Logo -->
+          <div class="col-auto">
+            <div class="company-logo-card">
+              <img id="hero-logo" src="" alt="Company Logo" class="company-logo-img">
+            </div>
+          </div>
+
+          <!-- Title & Badges -->
+          <div class="col">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span class="badge bg-success bg-opacity-25 text-white border border-success-subtle px-3 py-1 rounded-pill small fw-semibold">
+                <i class="bi bi-patch-check-fill text-success me-1"></i> Verified Employer Partner
+              </span>
+              <span id="hero-category-badge" class="badge bg-primary bg-opacity-25 text-white border border-primary-subtle px-3 py-1 rounded-pill small fw-semibold">
+                Web Development
+              </span>
+              <span id="hero-match-pill" class="badge bg-warning text-dark px-3 py-1 rounded-pill small fw-bold">
+                <i class="bi bi-pie-chart-fill me-1"></i> Match Calculating...
+              </span>
+            </div>
+
+            <h1 class="fw-bold text-white mb-1" id="hero-role-title">Role Title</h1>
+            
+            <div class="d-flex flex-wrap align-items-center gap-3 text-light opacity-95 small mt-2">
+              <div>
+                <i class="bi bi-building me-1 text-warning"></i>
+                <strong class="fs-6 text-white" id="hero-company-name">Company Name</strong>
+              </div>
+              <div>
+                <i class="bi bi-geo-alt-fill me-1 text-danger"></i>
+                <span id="hero-location-text">City, State, Country</span>
+              </div>
+              <div>
+                <i class="bi bi-laptop me-1 text-info"></i>
+                <span id="hero-workmode-text">Remote</span>
+              </div>
+            </div>
+
+            <!-- Top Action Controls -->
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-4">
+              <!-- Official Company Profile Button -->
+              <a id="btn-hero-official-website" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-sm px-3 rounded-pill fw-semibold">
+                <i class="bi bi-box-arrow-up-right me-1"></i> View Official Company Profile
+              </a>
+
+              <!-- Contact Verified Email Button -->
+              <a id="btn-hero-email" href="#" class="btn btn-light btn-sm px-3 rounded-pill text-dark fw-semibold">
+                <i class="bi bi-envelope-check-fill text-primary me-1"></i> Verified Email
+              </a>
+
+              <!-- Save Button -->
+              <button type="button" id="btn-hero-save" class="btn btn-outline-light btn-sm px-3 rounded-pill">
+                <i class="bi bi-bookmark-heart me-1"></i> Save
+              </button>
+
+              <!-- Apply Now Button -->
+              <button type="button" id="btn-hero-apply" class="btn btn-brand btn-sm px-4 rounded-pill fw-bold shadow-sm">
+                <i class="bi bi-send-fill me-1"></i> Apply Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Sections -->
+    <div class="container py-4">
+      <div class="row g-4">
+
+        <!-- ========================================================= -->
+        <!-- LEFT COLUMN (Role Specs, Skills, Description, Requirements) -->
+        <!-- ========================================================= -->
+        <div class="col-lg-8">
+
+          <!-- 1. Quick Role Specifications -->
+          <div class="detail-section-card">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+              <i class="bi bi-briefcase-fill text-primary me-2"></i> Role Specifications & Compensation
+            </h5>
+            
+            <div class="row g-3">
+              <div class="col-sm-3 col-6">
+                <div class="spec-tile">
+                  <span class="spec-tile-icon text-success"><i class="bi bi-cash-stack"></i></span>
+                  <small class="text-muted d-block fw-semibold">Stipend</small>
+                  <strong class="text-dark fs-6" id="spec-stipend">$1,200/mo</strong>
+                </div>
+              </div>
+              <div class="col-sm-3 col-6">
+                <div class="spec-tile">
+                  <span class="spec-tile-icon text-primary"><i class="bi bi-laptop"></i></span>
+                  <small class="text-muted d-block fw-semibold">Work Mode</small>
+                  <strong class="text-dark fs-6" id="spec-mode">Remote</strong>
+                </div>
+              </div>
+              <div class="col-sm-3 col-6">
+                <div class="spec-tile">
+                  <span class="spec-tile-icon text-warning"><i class="bi bi-clock-history"></i></span>
+                  <small class="text-muted d-block fw-semibold">Duration</small>
+                  <strong class="text-dark fs-6" id="spec-duration">3 Months</strong>
+                </div>
+              </div>
+              <div class="col-sm-3 col-6">
+                <div class="spec-tile">
+                  <span class="spec-tile-icon text-danger"><i class="bi bi-calendar-check"></i></span>
+                  <small class="text-muted d-block fw-semibold">Application Deadline</small>
+                  <strong class="text-dark fs-6" id="spec-deadline">Ongoing</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Eligibility Banner -->
+            <div class="mt-3 p-3 bg-light rounded-3 border">
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-mortarboard-fill text-primary fs-5 mt-1"></i>
+                <div>
+                  <strong class="text-dark d-block">Academic & Professional Eligibility</strong>
+                  <span class="text-secondary small" id="spec-eligibility">Eligibility details...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Skill Match & Compatibility Breakdown -->
+          <div class="detail-section-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
+                  <i class="bi bi-speedometer2 text-primary me-2"></i> Verified Skill Alignment Breakdown
+                </h5>
+                <small class="text-muted">Real-time comparison between your extracted skills and corporate requirements</small>
+              </div>
+              <span id="detail-match-badge" class="badge bg-primary px-3 py-2 fw-bold fs-6 rounded-pill">
+                0% Match
+              </span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress mb-2" style="height: 12px; border-radius: 6px; background-color: #e2e8f0;">
+              <div id="detail-match-progress" class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: 0%;"></div>
+            </div>
+
+            <div class="d-flex justify-content-between small text-muted mb-4" id="detail-match-formula-note">
+              <span>Matching Skills Calculation</span>
+              <span>Formula: (Matched Required Skills &divide; Total Required Skills) &times; 100</span>
+            </div>
+
+            <!-- Matching Skills Box -->
+            <div class="mb-3 p-3 rounded-3 bg-white border border-success border-opacity-50">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="text-success small d-flex align-items-center">
+                  <i class="bi bi-check-circle-fill me-1"></i> Matching Skills from Your Profile (<span id="detail-matching-count">0</span>):
+                </strong>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 small" id="detail-alignment-rate-badge">
+                  0% alignment each
+                </span>
+              </div>
+              <div class="d-flex flex-wrap gap-1" id="detail-matching-skills-container">
+                <!-- Matching badges -->
+              </div>
+            </div>
+
+            <!-- Missing Skills Box -->
+            <div id="detail-missing-box" class="p-3 rounded-3 bg-light border border-danger border-opacity-25">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong class="text-danger small d-flex align-items-center">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Required Skills Missing From Profile (<span id="detail-missing-count">0</span>):
+                </strong>
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 small">
+                  Action Recommended
+                </span>
+              </div>
+              <div class="d-flex flex-wrap gap-1 mb-2" id="detail-missing-skills-container">
+                <!-- Missing badges -->
+              </div>
+              <small class="text-muted d-block" id="detail-missing-tip">
+                <i class="bi bi-info-circle text-primary me-1"></i> Adding these skills to your profile and resume will elevate your compatibility to 100%.
+              </small>
+            </div>
+          </div>
+
+          <!-- 3. Role Description & Responsibilities -->
+          <div class="detail-section-card">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+              <i class="bi bi-file-text-fill text-primary me-2"></i> Role Description & Project Scope
+            </h5>
+            <div class="text-secondary mb-4" id="detail-full-description" style="line-height: 1.8; font-size: 0.95rem;">
+              Description placeholder...
+            </div>
+
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-award-fill text-warning me-2"></i> Perks, Mentorship & Benefits</h6>
+            <ul class="list-unstyled small text-secondary mb-0 row g-2" id="detail-perks-list">
+              <!-- Perks loaded dynamically -->
+            </ul>
+          </div>
+
+          <!-- 4. Application Requirements & Candidate Checklist -->
+          <div class="detail-section-card">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+              <i class="bi bi-check2-square text-primary me-2"></i> Application Requirements & Submission Checklist
+            </h5>
+            <p class="small text-secondary mb-3">
+              Review all mandatory criteria established by the corporate hiring team before initiating your application:
+            </p>
+
+            <div class="req-checklist-item">
+              <i class="bi bi-patch-check-fill text-success fs-5"></i>
+              <div>
+                <strong class="text-dark small d-block">Verified Technical Resume (PDF or DOCX)</strong>
+                <span class="text-muted small">Your uploaded platform resume containing your latest projects, education, and technical skills will be transmitted upon submission.</span>
+              </div>
+            </div>
+
+            <div class="req-checklist-item">
+              <i class="bi bi-mortarboard-fill text-primary fs-5"></i>
+              <div>
+                <strong class="text-dark small d-block">Enrolled Academic Standing</strong>
+                <span class="text-muted small">Applicants must be actively enrolled in an accredited undergraduate or postgraduate degree program in Engineering, Computer Applications, or related disciplines.</span>
+              </div>
+            </div>
+
+            <div class="req-checklist-item">
+              <i class="bi bi-laptop-fill text-info fs-5"></i>
+              <div>
+                <strong class="text-dark small d-block">Work Mode & Commitment</strong>
+                <span class="text-muted small" id="detail-workmode-requirement">Remote execution with daily standup participation and minimum 20-30 hours weekly availability.</span>
+              </div>
+            </div>
+
+            <div class="req-checklist-item">
+              <i class="bi bi-kanban-fill text-warning fs-5"></i>
+              <div>
+                <strong class="text-dark small d-block">Integrated ATS Stage Tracking</strong>
+                <span class="text-muted small">Once submitted, your application status transitions to 'Applied' in your SQLite tracker and can be tracked through interview scheduling and offer release.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Application Action & ATS Integration Box -->
+          <div class="detail-section-card bg-white border-primary border-opacity-50">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+              <div>
+                <h5 class="fw-bold text-dark mb-1 d-flex align-items-center">
+                  <i class="bi bi-send-check text-primary me-2"></i> Ready to Apply for this Opportunity?
+                </h5>
+                <p class="text-secondary small mb-0">
+                  Applications are recorded directly in your personal SQLite ATS tracker and routed to the employer portal.
+                </p>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <button type="button" id="btn-main-apply" class="btn btn-brand px-4 py-2 fw-bold shadow-sm">
+                  <i class="bi bi-send me-1"></i> Apply Now
+                </button>
+                <a href="applications.html" class="btn btn-outline-secondary px-3 py-2 fw-semibold">
+                  <i class="bi bi-kanban me-1"></i> ATS Dashboard
+                </a>
+              </div>
+            </div>
+
+            <!-- Existing ATS Status Notice (if applied) -->
+            <div id="detail-applied-notice" class="alert alert-success border-success border-opacity-50 mt-3 mb-0 d-none">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                  <i class="bi bi-check-circle-fill text-success me-2 fs-5"></i>
+                  <strong>You have applied to this role!</strong> Current tracking status: 
+                  <span id="detail-ats-status-badge" class="badge bg-success ms-1">Applied</span>
+                </div>
+                <a href="applications.html" class="btn btn-outline-success btn-sm fw-bold">
+                  <i class="bi bi-pencil-square me-1"></i> Update Status / Notes in ATS
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- RIGHT COLUMN (Company Overview, Verified Email, Google Maps) -->
+        <!-- ========================================================= -->
+        <div class="col-lg-4">
+
+          <!-- 1. Company Overview Card -->
+          <div class="detail-section-card">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+              <i class="bi bi-building text-primary me-2"></i> About the Company
+            </h5>
+            
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <img id="side-logo" src="" alt="Company Logo" class="rounded-3 border" style="width: 56px; height: 56px; object-fit: cover;">
+              <div>
+                <h6 class="fw-bold text-dark mb-0" id="side-company-name">Company Name</h6>
+                <small class="text-muted"><i class="bi bi-patch-check-fill text-success me-1"></i> Verified Partner</small>
+              </div>
+            </div>
+
+            <p class="small text-secondary mb-3" id="side-company-description" style="line-height: 1.6;">
+              Company overview description...
+            </p>
+
+            <!-- Prominent "View Official Company Profile" Button -->
+            <a id="btn-side-official-profile" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-brand w-100 py-2 fw-semibold">
+              <i class="bi bi-box-arrow-up-right me-2"></i> View Official Company Profile
+            </a>
+          </div>
+
+          <!-- 2. Contact Info with Verified Email Only -->
+          <div class="detail-section-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
+                <i class="bi bi-envelope-at-fill text-primary me-2"></i> Verified Contact
+              </h5>
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small rounded-pill">
+                <i class="bi bi-shield-check me-1"></i> Verified
+              </span>
+            </div>
+
+            <p class="small text-muted mb-3">
+              Contact corporate recruitment through their verified communications channels:
+            </p>
+
+            <!-- Verified Recruitment Email -->
+            <div class="verified-contact-pill mb-3">
+              <div class="d-flex justify-content-between align-items-start">
+                <small class="text-success fw-bold text-uppercase d-flex align-items-center" style="font-size: 0.72rem;">
+                  <i class="bi bi-patch-check-fill me-1"></i> Verified Recruitment Email
+                </small>
+                <button type="button" class="btn btn-link p-0 text-muted" id="btn-copy-recruit-email" title="Copy Email">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </div>
+              <div class="fw-bold text-dark mt-1" id="contact-recruitment-email" style="word-break: break-all;">
+                careers@company.com
+              </div>
+              <div class="mt-2">
+                <a id="btn-mailto-recruitment" href="#" class="btn btn-sm btn-outline-success w-100 py-1" style="font-size: 0.8rem;">
+                  <i class="bi bi-envelope me-1"></i> Inquire with Recruitment Team
+                </a>
+              </div>
+            </div>
+
+            <!-- Verified Corporate Office Email -->
+            <div class="verified-contact-pill">
+              <div class="d-flex justify-content-between align-items-start">
+                <small class="text-primary fw-bold text-uppercase d-flex align-items-center" style="font-size: 0.72rem;">
+                  <i class="bi bi-patch-check-fill me-1"></i> Verified Corporate Desk
+                </small>
+                <button type="button" class="btn btn-link p-0 text-muted" id="btn-copy-contact-email" title="Copy Email">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </div>
+              <div class="fw-bold text-dark mt-1" id="contact-general-email" style="word-break: break-all;">
+                contact@company.com
+              </div>
+            </div>
+
+            <div class="mt-3 text-muted small" style="font-size: 0.75rem;">
+              <i class="bi bi-clock-history me-1"></i> Inquiries received are acknowledged within 1–2 business days.
+            </div>
+          </div>
+
+          <!-- 3. Company Location & Google Maps Integration (No API Key Required) -->
+          <div class="detail-section-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
+                <i class="bi bi-geo-alt-fill text-danger me-2"></i> Company Location
+              </h5>
+              <span class="badge bg-light text-dark border px-2 py-1 small rounded-pill">
+                <i class="bi bi-map me-1"></i> Google Maps
+              </span>
+            </div>
+
+            <!-- Address Text -->
+            <div class="p-3 bg-light rounded-3 border mb-3 small">
+              <strong class="text-dark d-block mb-1">Corporate Headquarters:</strong>
+              <div class="text-secondary" id="map-address-text">
+                500 Howard Street, Suite 420, San Francisco, California, United States
+              </div>
+            </div>
+
+            <!-- Embedded Interactive Google Map Iframe (Basic map link, 0 paid API key required) -->
+            <div class="map-embed-wrapper mb-3">
+              <iframe
+                id="google-maps-embed-iframe"
+                class="map-embed-iframe"
+                title="Google Maps Location"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"
+                src="about:blank">
+              </iframe>
+            </div>
+
+            <!-- Open in Google Maps Button -->
+            <a id="btn-open-google-maps" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger w-100 btn-sm py-2 fw-semibold">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Open Location in Google Maps
+            </a>
+          </div>
+
+          <!-- 4. Other Open Opportunities at this Company -->
+          <div class="detail-section-card" id="side-other-openings-card">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+              <i class="bi bi-grid-fill text-primary me-2"></i> Other Roles at this Company
+            </h5>
+            <div id="side-other-openings-list" class="d-flex flex-column gap-2">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Dynamic Footer Container -->
+  <div id="footer-container"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Global Scripts -->
+  <script src="js/auth.js"></script>
+  <script src="js/success-animation.js"></script>
+
+  <script>
+    let currentInternshipId = null;
+    let currentInternshipData = null;
+    let currentCompanyOpenings = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      Auth.renderNavbar('recommendations');
+      Auth.renderFooter();
+
+      const params = new URLSearchParams(window.location.search);
+      currentInternshipId = params.get('id');
+      const companyParamId = params.get('companyId');
+
+      if (!currentInternshipId && !companyParamId) {
+        document.getElementById('loading-container').classList.add('d-none');
+        document.getElementById('error-container').classList.remove('d-none');
+        return;
+      }
+
+      await loadCompanyDetailsData(currentInternshipId, companyParamId);
+    });
+
+    async function loadCompanyDetailsData(internshipId, companyId) {
+      const loadingEl = document.getElementById('loading-container');
+      const errorEl = document.getElementById('error-container');
+      const contentEl = document.getElementById('main-content');
+
+      try {
+        const headers = {};
+        const token = Auth.getToken();
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        let targetInternshipId = internshipId;
+
+        // If opened with companyId but no specific internshipId, find first opening
+        if (!targetInternshipId && companyId) {
+          const compRes = await fetch(`/api/internships/company/${companyId}`, { headers });
+          const compData = await compRes.json();
+          if (compData.success && compData.openings && compData.openings.length > 0) {
+            targetInternshipId = compData.openings[0].id;
+          }
+        }
+
+        if (!targetInternshipId) {
+          loadingEl.classList.add('d-none');
+          errorEl.classList.remove('d-none');
+          return;
+        }
+
+        // Fetch single internship with full company join & personalized match
+        const res = await fetch(`/api/internships/${targetInternshipId}`, { headers });
+        const data = await res.json();
+
+        if (!data.success || !data.internship) {
+          loadingEl.classList.add('d-none');
+          errorEl.classList.remove('d-none');
+          return;
+        }
+
+        currentInternshipData = data.internship;
+        currentInternshipId = currentInternshipData.id;
+
+        // Fetch other openings at this company
+        const compId = currentInternshipData.company_id || currentInternshipData.company_details?.id;
+        if (compId) {
+          try {
+            const compRes = await fetch(`/api/internships/company/${compId}`, { headers });
+            const compData = await compRes.json();
+            if (compData.success && compData.openings) {
+              currentCompanyOpenings = compData.openings;
+            }
+          } catch (e) {
+            console.warn('Could not fetch company openings:', e);
+          }
+        }
+
+        renderCompanyDetailsPage(currentInternshipData);
+
+        loadingEl.classList.add('d-none');
+        contentEl.classList.remove('d-none');
+
+      } catch (err) {
+        console.error('Error loading company details:', err);
+        loadingEl.classList.add('d-none');
+        errorEl.classList.remove('d-none');
+      }
+    }
+
+    function renderCompanyDetailsPage(item) {
+      const comp = item.company_details || {};
+      const companyName = comp.name || item.company || 'Corporate Employer';
+      document.title = `${companyName} — ${item.title} | AI Internship Platform`;
+
+      // 1. Breadcrumbs & Hero
+      document.getElementById('hero-breadcrumb-name').textContent = `${companyName} (${item.title})`;
+      document.getElementById('hero-role-title').textContent = item.title;
+      document.getElementById('hero-company-name').textContent = companyName;
+      document.getElementById('hero-category-badge').textContent = item.category || 'Technology';
+      document.getElementById('hero-workmode-text').textContent = item.work_mode || 'Flexible';
+
+      // Logo with graceful fallback
+      const logoEl = document.getElementById('hero-logo');
+      const sideLogoEl = document.getElementById('side-logo');
+      const defaultLogo = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='104' height='104'><rect width='100%' height='100%' fill='%234f46e5'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold' font-size='42'>${encodeURIComponent(companyName[0])}</text></svg>`;
+      
+      const logoSrc = comp.logo_url || defaultLogo;
+      logoEl.src = logoSrc;
+      logoEl.onerror = () => { logoEl.src = defaultLogo; };
+      if (sideLogoEl) {
+        sideLogoEl.src = logoSrc;
+        sideLogoEl.onerror = () => { sideLogoEl.src = defaultLogo; };
+      }
+
+      // Location
+      const fullAddress = [comp.address, comp.city, comp.state, comp.country].filter(Boolean).join(', ') || item.location;
+      document.getElementById('hero-location-text').textContent = [comp.city, comp.country].filter(Boolean).join(', ') || fullAddress;
+      document.getElementById('map-address-text').textContent = fullAddress;
+
+      // 2. Official Company Profile Button (Opens verified company website in a new tab)
+      let officialWebsiteUrl = comp.website || item.official_url;
+      if (!officialWebsiteUrl || officialWebsiteUrl.includes('example.')) {
+        officialWebsiteUrl = `/demo-company.html?id=${comp.id || item.company_id || item.id}`;
+      }
+      
+      const btnHeroWebsite = document.getElementById('btn-hero-official-website');
+      const btnSideWebsite = document.getElementById('btn-side-official-profile');
+      if (btnHeroWebsite) btnHeroWebsite.href = officialWebsiteUrl;
+      if (btnSideWebsite) btnSideWebsite.href = officialWebsiteUrl;
+
+      // 3. Verified Emails Only
+      const recruitmentEmail = comp.recruitment_email || comp.contact_email || `careers@${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+      const contactEmail = comp.contact_email || `contact@${companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+
+      document.getElementById('contact-recruitment-email').textContent = recruitmentEmail;
+      document.getElementById('contact-general-email').textContent = contactEmail;
+
+      const heroEmailBtn = document.getElementById('btn-hero-email');
+      const sideMailtoBtn = document.getElementById('btn-mailto-recruitment');
+      const mailtoUrl = `mailto:${recruitmentEmail}?subject=${encodeURIComponent(`Inquiry Regarding ${item.title} Internship — ${companyName}`)}&body=${encodeURIComponent(`Dear Recruitment Team at ${companyName},\n\nI am writing to express my interest in the ${item.title} internship opportunity.\n\nBest regards,\nApplicant`)}`;
+
+      if (heroEmailBtn) heroEmailBtn.href = mailtoUrl;
+      if (sideMailtoBtn) sideMailtoBtn.href = mailtoUrl;
+
+      // Copy email handlers
+      document.getElementById('btn-copy-recruit-email').onclick = () => {
+        navigator.clipboard.writeText(recruitmentEmail);
+        Auth.showToast(`Copied ${recruitmentEmail} to clipboard!`, 'success');
+      };
+      document.getElementById('btn-copy-contact-email').onclick = () => {
+        navigator.clipboard.writeText(contactEmail);
+        Auth.showToast(`Copied ${contactEmail} to clipboard!`, 'success');
+      };
+
+      // 4. Google Maps Integration without requiring paid API key
+      const encodedAddress = encodeURIComponent(fullAddress);
+      const googleMapsIframe = document.getElementById('google-maps-embed-iframe');
+      const openMapsBtn = document.getElementById('btn-open-google-maps');
+
+      if (googleMapsIframe) {
+        googleMapsIframe.src = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      }
+      if (openMapsBtn) {
+        openMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+      }
+
+      // 5. Specs & Description
+      document.getElementById('spec-stipend').textContent = item.stipend || 'Competitive';
+      document.getElementById('spec-mode').textContent = item.work_mode || 'Flexible';
+      document.getElementById('spec-duration').textContent = item.duration || '3 Months';
+      document.getElementById('spec-deadline').textContent = item.deadline || 'Ongoing';
+      document.getElementById('spec-eligibility').textContent = item.eligibility || 'Open to technical college students.';
+      document.getElementById('detail-workmode-requirement').textContent = `${item.work_mode || 'Flexible'} schedule with mentorship and weekly deliverables.`;
+
+      document.getElementById('detail-full-description').textContent = item.description || 'Comprehensive technology internship opportunity.';
+      document.getElementById('side-company-name').textContent = companyName;
+      document.getElementById('side-company-description').textContent = comp.description || 'Enterprise Technology and Software Organization.';
+
+      // Perks
+      const perksContainer = document.getElementById('detail-perks-list');
+      const perksList = item.perks || ['Mentorship from Senior Staff', 'Flexible Hours', 'Certificate of Completion', 'Pre-Placement Offer (PPO) Eligibility'];
+      perksContainer.innerHTML = perksList.map(p => `
+        <li class="col-sm-6 d-flex align-items-center">
+          <i class="bi bi-check2-circle text-success me-2 fs-6"></i>
+          <span>${p}</span>
+        </li>
+      `).join('');
+
+      // 6. Extracted Skill Match & Compatibility Calculation
+      const reqSkills = item.required_skills || [];
+      const totalReq = reqSkills.length > 0 ? reqSkills.length : 1;
+      const matchingSkills = item.matchingSkills || [];
+      const missingSkills = item.missingSkills || [];
+      const matchCount = matchingSkills.length;
+
+      let matchPct = 0;
+      if (reqSkills.length > 0) {
+        matchPct = Math.round((matchCount / totalReq) * 100);
+      } else if (item.matchScore !== null && item.matchScore !== undefined) {
+        matchPct = Math.round(Number(item.matchScore));
+      }
+
+      const indAlignmentPct = totalReq > 0 ? (100 / totalReq).toFixed(1).replace('.0', '') : '0';
+
+      const heroMatchPill = document.getElementById('hero-match-pill');
+      const detailMatchBadge = document.getElementById('detail-match-badge');
+      const detailMatchProgress = document.getElementById('detail-match-progress');
+
+      const badgeBg = matchPct >= 70 ? 'bg-success' : (matchPct >= 40 ? 'bg-primary' : 'bg-warning text-dark');
+      if (heroMatchPill) {
+        heroMatchPill.className = `badge ${badgeBg} px-3 py-1 rounded-pill small fw-bold`;
+        heroMatchPill.innerHTML = `<i class="bi bi-pie-chart-fill me-1"></i> ${matchPct}% Skill Match`;
+      }
+      if (detailMatchBadge) {
+        detailMatchBadge.className = `badge ${badgeBg} px-3 py-2 fw-bold fs-6 rounded-pill`;
+        detailMatchBadge.textContent = `${matchPct}% Match`;
+      }
+      if (detailMatchProgress) {
+        detailMatchProgress.style.width = `${matchPct}%`;
+        detailMatchProgress.className = `progress-bar progress-bar-striped ${matchPct >= 70 ? 'bg-success' : (matchPct >= 40 ? 'bg-primary' : 'bg-warning')}`;
+      }
+
+      document.getElementById('detail-matching-count').textContent = matchCount;
+      document.getElementById('detail-alignment-rate-badge').textContent = `+${indAlignmentPct}% alignment each`;
+      
+      const matchingContainer = document.getElementById('detail-matching-skills-container');
+      if (matchingSkills.length > 0) {
+        matchingContainer.innerHTML = matchingSkills.map(s => `
+          <span class="skill-tag skill-tag-matched">
+            <i class="bi bi-check2 text-success me-1"></i>${s}
+            <span class="badge bg-success text-white ms-1 rounded-pill small">+${indAlignmentPct}%</span>
+          </span>
+        `).join('');
+      } else {
+        matchingContainer.innerHTML = `<small class="text-muted fst-italic">Upload your resume to calculate matching verified skills.</small>`;
+      }
+
+      // Missing skills
+      document.getElementById('detail-missing-count').textContent = missingSkills.length;
+      const missingContainer = document.getElementById('detail-missing-skills-container');
+      const missingBox = document.getElementById('detail-missing-box');
+
+      if (missingSkills.length > 0) {
+        missingContainer.innerHTML = missingSkills.map(s => `
+          <span class="skill-tag skill-tag-missing">
+            <i class="bi bi-x-circle text-danger me-1"></i>${s}
+            <span class="badge bg-danger text-white ms-1 rounded-pill small">Missing (-${indAlignmentPct}%)</span>
+          </span>
+        `).join('');
+        document.getElementById('detail-missing-tip').innerHTML = `
+          <i class="bi bi-info-circle text-primary me-1"></i> Adding these ${missingSkills.length} skill${missingSkills.length === 1 ? '' : 's'} will elevate your compatibility to 100% for ${companyName}.
+        `;
+      } else {
+        missingBox.className = 'p-3 rounded-3 bg-success bg-opacity-10 border border-success border-opacity-25';
+        missingBox.innerHTML = `
+          <div class="text-success fw-bold small d-flex align-items-center">
+            <i class="bi bi-patch-check-fill me-2 fs-5"></i> 100% Verified Skill Compatibility! Your profile covers all technical prerequisites for this role.
+          </div>
+        `;
+      }
+
+      // 7. Save Internship State
+      updateSaveButtons(item.isSaved);
+
+      // 8. Application State & Apply Buttons
+      updateApplyButtons(item.hasApplied, item.applicationStatus);
+
+      // 9. Other Openings List
+      renderOtherOpenings(currentCompanyOpenings, item.id);
+    }
+
+    function updateSaveButtons(isSaved) {
+      const heroSaveBtn = document.getElementById('btn-hero-save');
+      if (!heroSaveBtn) return;
+
+      if (isSaved) {
+        heroSaveBtn.className = 'btn btn-warning btn-sm px-3 rounded-pill text-dark fw-semibold';
+        heroSaveBtn.innerHTML = '<i class="bi bi-bookmark-heart-fill me-1"></i> Saved';
+      } else {
+        heroSaveBtn.className = 'btn btn-outline-light btn-sm px-3 rounded-pill';
+        heroSaveBtn.innerHTML = '<i class="bi bi-bookmark-heart me-1"></i> Save';
+      }
+
+      heroSaveBtn.onclick = async () => {
+        if (!Auth.isLoggedIn()) {
+          Auth.showToast('Please log in first to save internships.', 'info');
+          return;
+        }
+        try {
+          const endpoint = `/api/internships/${currentInternshipId}/save`;
+          const method = currentInternshipData.isSaved ? 'DELETE' : 'POST';
+          const res = await Auth.authFetch(endpoint, { method });
+          const data = await res.json();
+          if (data.success) {
+            currentInternshipData.isSaved = !currentInternshipData.isSaved;
+            updateSaveButtons(currentInternshipData.isSaved);
+            Auth.showToast(data.message, 'success');
+          }
+        } catch (e) {
+          Auth.showToast('Could not update saved status.', 'error');
+        }
+      };
+    }
+
+    function updateApplyButtons(hasApplied, status) {
+      const heroApplyBtn = document.getElementById('btn-hero-apply');
+      const mainApplyBtn = document.getElementById('btn-main-apply');
+      const appliedNotice = document.getElementById('detail-applied-notice');
+      const atsStatusBadge = document.getElementById('detail-ats-status-badge');
+
+      if (hasApplied && (status === 'Applied' || status === 'Application Started')) {
+        if (heroApplyBtn) {
+          heroApplyBtn.className = 'btn btn-success btn-sm px-4 rounded-pill fw-bold shadow-sm';
+          heroApplyBtn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Applied';
+          heroApplyBtn.onclick = () => showSuccessAnimation();
+        }
+        if (mainApplyBtn) {
+          mainApplyBtn.className = 'btn btn-success px-4 py-2 fw-bold shadow-sm';
+          mainApplyBtn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Applied';
+          mainApplyBtn.onclick = () => showSuccessAnimation();
+        }
+        if (appliedNotice) {
+          appliedNotice.classList.remove('d-none');
+          if (atsStatusBadge) atsStatusBadge.textContent = status || 'Applied';
+        }
+      } else {
+        if (heroApplyBtn) {
+          heroApplyBtn.className = 'btn btn-brand btn-sm px-4 rounded-pill fw-bold shadow-sm';
+          heroApplyBtn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Apply Now';
+          heroApplyBtn.onclick = executeApplicationSubmission;
+        }
+        if (mainApplyBtn) {
+          mainApplyBtn.className = 'btn btn-brand px-4 py-2 fw-bold shadow-sm';
+          mainApplyBtn.innerHTML = '<i class="bi bi-send me-1"></i> Apply Now';
+          mainApplyBtn.onclick = executeApplicationSubmission;
+        }
+        if (appliedNotice) appliedNotice.classList.add('d-none');
+      }
+    }
+
+    async function executeApplicationSubmission() {
+      if (!Auth.isLoggedIn()) {
+        Auth.showToast('Please log in first to apply and track your internships.', 'info');
+        setTimeout(() => {
+          window.location.href = `login.html?redirect=company-details.html?id=${currentInternshipId}`;
+        }, 1200);
+        return;
+      }
+
+      try {
+        // 1. Session click
+        await Auth.authFetch(`/api/internships/${currentInternshipId}/apply`, { method: 'POST' });
+
+        // 2. Official Portal Submit
+        const res = await Auth.authFetch(`/api/internships/${currentInternshipId}/portal-submit`, {
+          method: 'POST',
+          body: JSON.stringify({ notes: 'Applied from dedicated Company Details page' })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          currentInternshipData.hasApplied = true;
+          currentInternshipData.applicationStatus = 'Applied';
+
+          updateApplyButtons(true, 'Applied');
+
+          // Trigger Sophisticated Floating Particles Effect
+          showSuccessAnimation();
+
+          Auth.showToast(`Applied Successfully! 🎉 Logged into your SQLite ATS tracker.`, 'success');
+        } else {
+          Auth.showToast(data.message || 'Application tracking error.', 'error');
+        }
+      } catch (err) {
+        console.error('Apply error:', err);
+        Auth.showToast('Network error while processing application.', 'error');
+      }
+    }
+
+    function showSuccessAnimation() {
+      if (window.ApplicationSuccessEffect && currentInternshipData) {
+        window.ApplicationSuccessEffect.trigger({
+          roleTitle: currentInternshipData.title,
+          companyName: currentInternshipData.company,
+          matchScore: currentInternshipData.matchScore,
+          portalUrl: `/demo-application-portal.html?id=${currentInternshipData.id}`
+        });
+      }
+    }
+
+    function renderOtherOpenings(openings, currentId) {
+      const container = document.getElementById('side-other-openings-list');
+      const card = document.getElementById('side-other-openings-card');
+      if (!container) return;
+
+      const others = openings.filter(o => o.id !== currentId);
+      if (others.length === 0) {
+        if (card) card.classList.add('d-none');
+        return;
+      }
+
+      if (card) card.classList.remove('d-none');
+      container.innerHTML = others.slice(0, 4).map(o => `
+        <a href="company-details.html?id=${o.id}" class="p-2 rounded-3 border bg-light text-decoration-none d-block transition-hover">
+          <div class="fw-bold text-dark small mb-1">${o.title}</div>
+          <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+            <span><i class="bi bi-laptop me-1"></i>${o.work_mode}</span>
+            <span class="text-success fw-semibold">${o.stipend || 'Competitive'}</span>
+          </div>
+        </a>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

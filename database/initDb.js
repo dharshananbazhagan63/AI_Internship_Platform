@@ -1,5 +1,9 @@
 const db = require('./db');
-const { sampleCompanies, sampleInternships } = require('./seedData');
+const { sampleCompanies: baseCompanies, sampleInternships: baseInternships } = require('./seedData');
+const { tamilNaduCompanies, tamilNaduInternships } = require('./seedTamilNaduCompanies');
+
+const sampleCompanies = [...baseCompanies, ...tamilNaduCompanies];
+const sampleInternships = [...baseInternships, ...tamilNaduInternships];
 
 async function helperAddColumnIfNotExists(tableName, columnName, columnDefinition) {
   const columns = await db.all(`PRAGMA table_info(${tableName})`);

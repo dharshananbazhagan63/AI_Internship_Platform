@@ -6,7 +6,6 @@ let selectedResumeFile = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   Auth.renderNavbar('upload');
-  Auth.renderFooter();
 
   if (!Auth.requireAuth()) return;
 

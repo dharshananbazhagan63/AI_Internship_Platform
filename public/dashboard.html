@@ -244,18 +244,15 @@
     </div>
   </main>
 
-  <!-- Dynamic Footer Container -->
-  <div id="footer-container"></div>
-
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Global Scripts -->
   <script src="js/auth.js"></script>
+  <script src="js/success-animation.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       Auth.renderNavbar('dashboard');
-      Auth.renderFooter();
 
       if (!Auth.requireAuth()) return;
 
@@ -381,7 +378,10 @@
 
         return `
           <div class="col-lg-6 col-md-12 mb-4">
-            <div class="card card-custom p-4 h-100 bg-white d-flex flex-column justify-content-between border border-primary border-opacity-25 shadow-sm">
+            <div class="card card-custom p-4 h-100 bg-white d-flex flex-column justify-content-between border border-primary border-opacity-25 shadow-sm"
+                 onclick="if (!event.target.closest('button, a')) window.location.href='company-details.html?id=${item.id}'"
+                 style="cursor: pointer;"
+                 title="Click to view full Company Details for ${item.company}">
               <div>
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill fw-semibold">
@@ -392,9 +392,14 @@
                   </span>
                 </div>
 
-                <h5 class="fw-bold text-dark mb-1">${item.title}</h5>
+                <a href="company-details.html?id=${item.id}" class="text-decoration-none text-dark">
+                  <h5 class="fw-bold mb-1">${item.title}</h5>
+                </a>
                 <div class="text-muted small fw-semibold mb-3">
-                  <i class="bi bi-building text-primary me-1"></i> <strong class="text-dark fs-6">${item.company}</strong> &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
+                  <a href="company-details.html?id=${item.id}" class="text-decoration-none text-muted">
+                    <i class="bi bi-building text-primary me-1"></i> <strong class="text-dark fs-6">${item.company}</strong>
+                  </a>
+                  &bull; <i class="bi bi-geo-alt me-1"></i> ${item.location}
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 mb-3">
@@ -475,7 +480,7 @@
               </div>
 
               <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-2">
-                <a href="internships.html" class="btn btn-brand-outline btn-sm w-100">
+                <a href="company-details.html?id=${item.id}" class="btn btn-brand-outline btn-sm w-100">
                   View Full Company Details & Apply <i class="bi bi-arrow-right ms-1"></i>
                 </a>
               </div>

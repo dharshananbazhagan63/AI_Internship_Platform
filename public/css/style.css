@@ -504,3 +504,338 @@ main {
     padding: 1.25rem;
   }
 }
+
+/* ===================================================================
+   Sophisticated Application Success Animation & Floating Particles
+   Color-independent, luminous, upward-drifting particle physics & glassmorphism
+   =================================================================== */
+
+/* High-DPI Floating Particles Canvas */
+.success-particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10050;
+}
+
+/* Floating Motes Container & DOM Icons */
+.success-motes-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10051;
+}
+
+.app-floating-mote {
+  position: absolute;
+  bottom: 15%;
+  opacity: 0;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.7), 0 0 24px rgba(160, 175, 255, 0.4);
+  transform: translateY(0) scale(0.8) rotate(0deg);
+  animation: floatUpwards linear forwards;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes floatUpwards {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.6) rotate(0deg);
+  }
+  15% {
+    opacity: 0.85;
+    transform: translateY(-40px) scale(1) rotate(12deg);
+  }
+  80% {
+    opacity: 0.6;
+    transform: translateY(-260px) scale(1.05) rotate(-15deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-380px) scale(0.9) rotate(25deg);
+  }
+}
+
+/* Subtle Notification Backdrop */
+.app-success-notification-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 10060;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+}
+
+.app-success-notification-backdrop.app-success-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.app-success-notification-backdrop.app-success-hiding {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Refined Glassmorphic Accomplishment Card */
+.app-success-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 28px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+    0 10px 30px rgba(99, 102, 241, 0.12);
+  width: 100%;
+  max-width: 520px;
+  padding: 2.5rem 2.25rem;
+  text-align: center;
+  overflow: hidden;
+  transform: translateY(24px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.app-success-visible .app-success-card {
+  transform: translateY(0) scale(1);
+}
+
+.app-success-hiding .app-success-card {
+  transform: translateY(16px) scale(0.97);
+}
+
+/* Top Opalescent Luminous Shimmer Line */
+.app-success-shimmer-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.9) 25%, 
+    rgba(147, 197, 253, 0.9) 50%, 
+    rgba(196, 181, 253, 0.9) 75%, 
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmerSlide 3s linear infinite;
+}
+
+@keyframes shimmerSlide {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Ambient Radial Glow Behind Checkmark */
+.app-success-ambient-glow {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ambientPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes ambientPulse {
+  0% { transform: translateX(-50%) scale(0.85); opacity: 0.5; }
+  100% { transform: translateX(-50%) scale(1.15); opacity: 0.9; }
+}
+
+/* Animated SVG Checkmark Icon Badge */
+.app-success-icon-container {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-success-checkmark-svg {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 3.2;
+  stroke: #10b981;
+  stroke-miterlimit: 10;
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.2);
+}
+
+.app-success-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 3.2;
+  stroke: #10b981;
+  fill: rgba(16, 185, 129, 0.08);
+  animation: strokeCircle 0.65s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.app-success-check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke: #10b981;
+  animation: strokeCheck 0.45s cubic-bezier(0.65, 0, 0.45, 1) 0.45s forwards;
+}
+
+@keyframes strokeCircle {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes strokeCheck {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Typography & Content Layout */
+.app-success-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  letter-spacing: 0.02em;
+}
+
+.app-success-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #4f46e5;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.app-success-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+}
+
+.app-success-subtitle {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+
+.app-success-role {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.app-success-company {
+  color: #4338ca;
+  font-weight: 700;
+}
+
+/* Verification Milestone Container */
+.app-success-milestone-box {
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+/* Buttons / Action Controls */
+.app-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.app-btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.app-btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+}
+
+.app-btn-secondary {
+  background: #ffffff;
+  color: #1e293b !important;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.68rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.app-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a !important;
+  transform: translateY(-1px);
+}
+
+.app-btn-subtle {
+  background: transparent;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 0.88rem;
+  padding: 0.5rem;
+  border: none;
+  transition: color 0.15s ease;
+}
+
+.app-btn-subtle:hover {
+  color: #1e293b;
+  text-decoration: underline;
+}

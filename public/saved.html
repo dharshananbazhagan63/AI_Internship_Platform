@@ -206,20 +206,17 @@
     </div>
   </div>
 
-  <!-- Dynamic Footer Container -->
-  <div id="footer-container"></div>
-
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Global Scripts -->
   <script src="js/auth.js"></script>
+  <script src="js/success-animation.js"></script>
 
   <script>
     let savedList = [];
 
     document.addEventListener('DOMContentLoaded', () => {
       Auth.renderNavbar('saved');
-      Auth.renderFooter();
 
       if (!Auth.requireAuth()) return;
 
@@ -381,8 +378,11 @@
 
               <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
                 <div class="d-flex gap-2">
+                  <a href="company-details.html?id=${item.id}" class="btn btn-outline-primary btn-sm fw-semibold">
+                    <i class="bi bi-building me-1"></i> Company Details
+                  </a>
                   <button class="btn btn-outline-secondary btn-sm" onclick="openDetailsModalSaved(${item.id})">
-                    <i class="bi bi-info-circle me-1"></i> View Details
+                    <i class="bi bi-info-circle me-1"></i> Quick View
                   </button>
                   <button class="btn btn-outline-danger btn-sm" onclick="removeSaved(${item.id}, '${item.title}')">
                     <i class="bi bi-trash3 me-1"></i> Remove
@@ -449,6 +449,31 @@
       const item = savedList.find((x) => x.id === id);
       if (!item) return;
 
+      const detailsModalEl = document.getElementById('internshipDetailsModal');
+      if (detailsModalEl) {
+        const detailsModal = bootstrap.Modal.getInstance(detailsModalEl);
+        if (detailsModal) detailsModal.hide();
+      }
+
+      if (window.ApplicationSuccessEffect) {
+        const portalUrl = `/demo-application-portal.html?id=${item.id}`;
+        let matchPct = null;
+        const reqSkills = item.required_skills || [];
+        if (reqSkills.length > 0 && item.matchingSkills) {
+          matchPct = Math.round((item.matchingSkills.length / reqSkills.length) * 100);
+        } else if (item.matchScore !== null && item.matchScore !== undefined) {
+          matchPct = Math.round(Number(item.matchScore));
+        }
+
+        window.ApplicationSuccessEffect.trigger({
+          roleTitle: item.title,
+          companyName: item.company,
+          matchScore: matchPct,
+          portalUrl: portalUrl
+        });
+        return;
+      }
+
       const roleEl = document.getElementById('success-modal-role');
       const compEl = document.getElementById('success-modal-company');
       const compNameEl = document.getElementById('success-modal-comp-name');
@@ -467,12 +492,6 @@
       }
       if (portalBtn) {
         portalBtn.href = `/demo-application-portal.html?id=${item.id}`;
-      }
-
-      const detailsModalEl = document.getElementById('internshipDetailsModal');
-      if (detailsModalEl) {
-        const detailsModal = bootstrap.Modal.getInstance(detailsModalEl);
-        if (detailsModal) detailsModal.hide();
       }
 
       const successModalEl = document.getElementById('appliedSuccessModal');
